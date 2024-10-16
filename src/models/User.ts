@@ -1,5 +1,4 @@
 import mongoose, { Document, Model } from 'mongoose';
-import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;
@@ -45,23 +44,12 @@ const userSchema = new mongoose.Schema<IUser>({
   timestamps: true,
 });
 
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
-    next();
-  }
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password!, salt);
-    next();
-  } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    } else {
-      next(new Error('알 수 없는 오류가 발생했습니다.'));
-    }
-  }
-  next();
-});
+userSchema.methods.toJSON = function() {
+  const obj = this.toObject();
+  obj._id = obj._id.toString();
+  delete obj.__v;
+  return obj;
+};
 
 const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', userSchema);
 

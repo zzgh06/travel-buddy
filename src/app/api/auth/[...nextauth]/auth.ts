@@ -1,22 +1,11 @@
-import NextAuth from 'next-auth';
-import type { AuthOptions, User as NextAuthUser } from 'next-auth';
-import type { JWT } from 'next-auth/jwt';
+import { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import dbConnect from '@/lib/mongodb';
 import User, { IUser } from '@/models/User';
 import bcrypt from 'bcryptjs';
 
-interface ExtendedUser extends NextAuthUser {
-  id: string;
-}
-
-interface ExtendedToken extends JWT {
-  id?: string;
-  googleAccessToken?: string;
-}
-
-const authOptions: AuthOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -28,7 +17,7 @@ const authOptions: AuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials): Promise<ExtendedUser | null> {
+      async authorize(credentials): Promise<any> {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("이메일과 비밀번호를 입력해주세요.");
         }
@@ -45,7 +34,7 @@ const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }: { token: ExtendedToken; user?: ExtendedUser; account?: any }) {
+    async jwt({ token, user, account }: any) {
       if (user) {
         token.id = user.id;
       }
@@ -54,7 +43,7 @@ const authOptions: AuthOptions = {
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: ExtendedToken }) {
+    async session({ session, token }: any) {
       if (session.user) {
         session.user.id = token.id as string;
       }
@@ -62,7 +51,3 @@ const authOptions: AuthOptions = {
     },
   },
 };
-
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST };

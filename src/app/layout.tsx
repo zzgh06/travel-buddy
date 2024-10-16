@@ -1,27 +1,24 @@
-import "./globals.css";
-import AuthProvider from "../components/auth-provider";
-import Navbar from "../components/navbar";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const queryClient = new QueryClient()
+import Provider from "@/components/provider"
+import "./globals.css"
+import Navbar from "@/components/navbar"
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="kr" className="max-w-[800px] min-h-[100vh] px-5 mx-auto">
-      <AuthProvider>
-        <body>
-          <Navbar />
-          <main>
-            <QueryClientProvider client={queryClient}>
-              {children}
-            </QueryClientProvider>
-          </main>
-        </body>
-      </AuthProvider>
+      <body>
+        <div className="min-h-[100vh] bg-white shadow-sm">
+          <Provider>
+            <header className="h-[60px] font-semibold text-3xl">
+              <Navbar />
+            </header>
+            <main>{children}</main>
+          </Provider>
+        </div>
+      </body>
     </html>
-  );
+  )
 }
