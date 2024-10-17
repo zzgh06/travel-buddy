@@ -7,6 +7,7 @@ export interface ITravelPlan extends Document {
   destination: string;
   description?: string;
   userEmail: string;
+  budget: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,6 +19,7 @@ const TravelPlanSchema: Schema = new Schema<ITravelPlan>({
   destination: { type: String, required: true },
   description: { type: String },
   userEmail: { type: String, required: true },
+  budget: { type: Number, default: 0 },
 }, { timestamps: true });
 
 export default mongoose.models.TravelPlan || mongoose.model<ITravelPlan>('TravelPlan', TravelPlanSchema);

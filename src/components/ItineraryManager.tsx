@@ -11,6 +11,8 @@ interface Itinerary {
   activity: string;
   location: string;
   notes?: string;
+  expense: number;
+  expenseDescription?: string;
 }
 
 interface ItineraryManagerProps {
@@ -21,8 +23,14 @@ interface ItineraryManagerProps {
 const ItineraryManager = ({ travelPlanId, initialItineraries }: ItineraryManagerProps) => {
   const [itineraries, setItineraries] = useState<Itinerary[]>(initialItineraries);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const { register, handleSubmit, reset } = useForm<Itinerary>();
   const router = useRouter();
+
+  useEffect(() => {
+    const total = itineraries.reduce((sum, itinerary) => sum + (itinerary.expense || 0), 0);
+    setTotalExpenses(total);
+  }, [itineraries]);
 
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -47,34 +55,52 @@ const ItineraryManager = ({ travelPlanId, initialItineraries }: ItineraryManager
     try {
       const url = editingId ? `/api/itineraries/${editingId}` : '/api/itineraries';
       const method = editingId ? 'PUT' : 'POST';
-
+  
+      // 지출 금액을 숫자로 변환
+      const expense = parseFloat(data.expense.toString()) || 0;
+  
+      const itineraryData = {
+        ...data,
+        travelPlanId,
+        expense,
+        expenseDescription: data.expenseDescription || ''
+      };
+  
       const response = await fetch(url, {
         method: method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, travelPlanId }),
+        body: JSON.stringify(itineraryData),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to save itinerary');
       }
-
+  
       const result = await response.json();
+      
       if (editingId) {
         setItineraries(itineraries.map(item => item._id === editingId ? result.data : item));
       } else {
         setItineraries([...itineraries, result.data]);
       }
-      
+  
+      const newTotalExpenses = itineraries.reduce((sum, itinerary) => {
+        return sum + (itinerary._id === editingId ? expense : (itinerary.expense || 0));
+      }, editingId ? 0 : expense);
+      setTotalExpenses(newTotalExpenses);
+  
       reset({
         date: '',
         time: '',
         activity: '',
         location: '',
-        notes: ''
+        notes: '',
+        expense: 0,
+        expenseDescription: ''
       });
       setEditingId(null);
-      
+  
       router.refresh();
       alert(editingId ? '일정이 수정되었습니다.' : '새 일정이 추가되었습니다.');
     } catch (error) {
@@ -113,6 +139,8 @@ const ItineraryManager = ({ travelPlanId, initialItineraries }: ItineraryManager
           <input {...register('time')} type="time" required className='p-2 border rounded' />
           <input {...register('activity')} placeholder='활동' required className='p-2 border rounded' />
           <input {...register('location')} placeholder='장소' required className='p-2 border rounded' />
+          <input {...register('expense')} type="number" step="1000" placeholder='지출 금액' className='p-2 border rounded' />
+          <input {...register('expenseDescription')} placeholder='지출 내역' className='p-2 border rounded' />
           <textarea {...register('notes')} placeholder='메모' required className='p-2 border rounded col-span-2' />
         </div>
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">

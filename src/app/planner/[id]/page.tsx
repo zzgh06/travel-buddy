@@ -1,11 +1,12 @@
 import { getServerSession } from 'next-auth/next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import TravelPlanDetail from '@/components/TravelPlanDetail';
 import ItineraryManager from '@/components/ItineraryManager';
 import dbConnect from '@/lib/mongodb';
 import TravelPlan from '@/models/TravelPlan';
 import Itinerary from '@/models/Itinerary';
+import BudgetTracker from '@/components/BudgetTracker';
 
 async function getTravelPlanAndItineraries(id: string, userEmail: string) {
   await dbConnect();
@@ -14,30 +15,49 @@ async function getTravelPlanAndItineraries(id: string, userEmail: string) {
     notFound();
   }
   const itineraries = await Itinerary.find({ travelPlanId: id }).sort({ date: 1, time: 1 });
+  
+  const totalExpenses = itineraries.reduce((sum, itinerary) => sum + (itinerary.expense || 0), 0);
+  const remainingBudget = travelPlan.budget - totalExpenses;
+
   return {
     travelPlan: JSON.parse(JSON.stringify(travelPlan)),
     itineraries: JSON.parse(JSON.stringify(itineraries)),
+    totalExpenses,
+    remainingBudget,
   };
 }
 
 export default async function PlanDetailPage({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return (
-      <div className="max-w-4xl mx-auto mt-8 p-4">
-        <h1 className="text-2xl font-bold mb-4">여행 계획 상세</h1>
-        <p>이 페이지를 보려면 로그인이 필요합니다.</p>
-        <a href="/login" className="text-blue-500 hover:underline">로그인하러 가기</a>
-      </div>
-    );
+  if (!session || !session.user?.email) {
+    alert('로그인이 필요한 서비스 입니다.')
+    redirect('/login');
   }
 
-  const { travelPlan, itineraries } = await getTravelPlanAndItineraries(params.id, session.user?.email || "");
+  const { travelPlan, itineraries, totalExpenses, remainingBudget } = await getTravelPlanAndItineraries(params.id, session.user?.email || "");
+
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-4">
-      <TravelPlanDetail travelPlan={travelPlan} />
-      <ItineraryManager travelPlanId={params.id} initialItineraries={itineraries} />
+      <div className="mb-8">
+        <TravelPlanDetail travelPlan={travelPlan} />
+      </div>
+      
+      <div className="mb-8">
+        <BudgetTracker 
+          budget={travelPlan.budget} 
+          totalExpenses={totalExpenses} 
+          remainingBudget={remainingBudget} 
+        />
+      </div>
+
+      <div>
+        <ItineraryManager 
+          travelPlanId={params.id} 
+          initialItineraries={itineraries} 
+        />
+      </div>
     </div>
-  );}
+  );
+}

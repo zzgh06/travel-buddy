@@ -10,6 +10,7 @@ type FormData = {
   startDate: string;
   endDate: string;
   destination: string;
+  budget: number;
   description: string;
 };
 
@@ -40,6 +41,7 @@ export default function CreateTravelPlan() {
 
       if (response.ok) {
         router.push('/planner');
+        router.refresh()
       } else {
         throw new Error('여행 계획 생성에 실패했습니다.');
       }
@@ -105,6 +107,22 @@ export default function CreateTravelPlan() {
             className="w-full px-3 py-2 border rounded-md"
           />
           {errors.destination && <p className="text-red-500">{errors.destination.message}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="budget" className="block mb-1">총 예산</label>
+          <input
+            data-cy="trip-budget-input"
+            id="budget"
+            type="number"
+            step="10000"
+            {...register('budget', { 
+              required: '총 예산을 입력해주세요',
+              min: { value: 0, message: '예산은 0 이상이어야 합니다.' }
+            })}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+          {errors.budget && <p className="text-red-500">{errors.budget.message}</p>}
         </div>
 
         <div>
