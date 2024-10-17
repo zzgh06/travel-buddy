@@ -7,6 +7,8 @@ export interface IItinerary extends Document {
   activity: string;
   location: string;
   notes?: string;
+  expense: number;
+  expenseDescription?: string;
 }
 
 const ItinerarySchema: Schema = new Schema({
@@ -16,6 +18,8 @@ const ItinerarySchema: Schema = new Schema({
   activity: { type: String, required: true },
   location: { type: String, required: true },
   notes: { type: String },
+  expense: { type: Number, default: 0 },
+  expenseDescription: { type: String }
 }, { timestamps: true });
 
 export default mongoose.models.Itinerary || mongoose.model<IItinerary>('Itinerary', ItinerarySchema);

@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { title, startDate, endDate, destination, description } = body;
+    const { title, startDate, endDate, destination, description, budget } = body;
 
     const travelPlan = new TravelPlan({
       title,
@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
       endDate,
       destination,
       description,
+      budget, 
       userEmail: session.user?.email,
     });
 

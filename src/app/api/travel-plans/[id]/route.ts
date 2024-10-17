@@ -21,11 +21,16 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     const itineraries = await Itinerary.find({ travelPlanId: params.id }).sort({ date: 1, time: 1 });
 
+    const totalExpenses = itineraries.reduce((sum, itinerary) => sum + (itinerary.expense || 0), 0);
+    const remainingBudget = travelPlan.budget - totalExpenses;
+
     return NextResponse.json({ 
       success: true, 
       data: { 
         travelPlan: JSON.parse(JSON.stringify(travelPlan)),
-        itineraries: JSON.parse(JSON.stringify(itineraries))
+        itineraries: JSON.parse(JSON.stringify(itineraries)),
+        totalExpenses,
+        remainingBudget
       }
     }, { status: 200 });
   } catch (error) {
