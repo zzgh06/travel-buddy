@@ -12,15 +12,15 @@ type TravelPlan = {
   description: string;
 };
 
-export default function TravelPlanDetail({ plan }: { plan: TravelPlan }) {
+export default function TravelPlanDetail({ travelPlan }: { travelPlan: TravelPlan }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedPlan, setEditedPlan] = useState(plan);
+  const [editedPlan, setEditedPlan] = useState(travelPlan);
   const router = useRouter();
 
   const handleEdit = async () => {
     if (isEditing) {
       try {
-        const response = await fetch(`/api/travel-plans/${plan._id}`, {
+        const response = await fetch(`/api/travel-plans/${travelPlan._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(editedPlan),
@@ -44,7 +44,7 @@ export default function TravelPlanDetail({ plan }: { plan: TravelPlan }) {
   const handleDelete = async () => {
     if (confirm('정말로 이 여행 계획을 삭제하시겠습니까?')) {
       try {
-        const response = await fetch(`/api/travel-plans/${plan._id}`, {
+        const response = await fetch(`/api/travel-plans/${travelPlan._id}`, {
           method: 'DELETE',
         });
 
@@ -78,7 +78,7 @@ export default function TravelPlanDetail({ plan }: { plan: TravelPlan }) {
             className="w-full px-3 py-2 border rounded-md"
           />
         ) : (
-          plan.title
+          travelPlan.title
         )}
       </h1>
       <div className="mb-4">
@@ -92,7 +92,7 @@ export default function TravelPlanDetail({ plan }: { plan: TravelPlan }) {
             className="w-full px-3 py-2 border rounded-md"
           />
         ) : (
-          plan.destination
+          travelPlan.destination
         )}
       </div>
       <div className="mb-4">
@@ -115,7 +115,7 @@ export default function TravelPlanDetail({ plan }: { plan: TravelPlan }) {
             />
           </>
         ) : (
-          `${new Date(plan.startDate).toLocaleDateString()} - ${new Date(plan.endDate).toLocaleDateString()}`
+          `${new Date(travelPlan.startDate).toLocaleDateString()} - ${new Date(travelPlan.endDate).toLocaleDateString()}`
         )}
       </div>
       <div className="mb-6">
@@ -129,7 +129,7 @@ export default function TravelPlanDetail({ plan }: { plan: TravelPlan }) {
             rows={4}
           />
         ) : (
-          plan.description
+          travelPlan.description
         )}
       </div>
       <div className="flex space-x-4">

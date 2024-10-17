@@ -1,17 +1,23 @@
 import { getServerSession } from 'next-auth/next';
-import dbConnect from '@/lib/mongodb';
-import TravelPlan from '@/models/TravelPlan';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import TravelPlanDetail from '@/components/TravelPlanDetail';
+import ItineraryManager from '@/components/ItineraryManager';
+import dbConnect from '@/lib/mongodb';
+import TravelPlan from '@/models/TravelPlan';
+import Itinerary from '@/models/Itinerary';
 
-async function getTravelPlan(id: string, userEmail: string) {
+async function getTravelPlanAndItineraries(id: string, userEmail: string) {
   await dbConnect();
-  const plan = await TravelPlan.findOne({ _id: id, userEmail });
-  if (!plan) {
+  const travelPlan = await TravelPlan.findOne({ _id: id, userEmail });
+  if (!travelPlan) {
     notFound();
   }
-  return JSON.parse(JSON.stringify(plan));
+  const itineraries = await Itinerary.find({ travelPlanId: id }).sort({ date: 1, time: 1 });
+  return {
+    travelPlan: JSON.parse(JSON.stringify(travelPlan)),
+    itineraries: JSON.parse(JSON.stringify(itineraries)),
+  };
 }
 
 export default async function PlanDetailPage({ params }: { params: { id: string } }) {
@@ -27,7 +33,11 @@ export default async function PlanDetailPage({ params }: { params: { id: string 
     );
   }
 
-  const plan = await getTravelPlan(params.id, session.user?.email || "");
+  const { travelPlan, itineraries } = await getTravelPlanAndItineraries(params.id, session.user?.email || "");
 
-  return <TravelPlanDetail plan={plan} />;
-}
+  return (
+    <div className="max-w-4xl mx-auto mt-8 p-4">
+      <TravelPlanDetail travelPlan={travelPlan} />
+      <ItineraryManager travelPlanId={params.id} initialItineraries={itineraries} />
+    </div>
+  );}
