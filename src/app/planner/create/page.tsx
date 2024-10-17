@@ -54,7 +54,7 @@ export default function CreateTravelPlan() {
   }
 
   if (!session) {
-    return null; 
+    return null;
   }
 
   return (
@@ -64,6 +64,7 @@ export default function CreateTravelPlan() {
         <div>
           <label htmlFor="title" className="block mb-1">제목</label>
           <input
+            data-cy="trip-title-input"
             id="title"
             {...register('title', { required: '제목을 입력해주세요.' })}
             className="w-full px-3 py-2 border rounded-md"
@@ -74,6 +75,7 @@ export default function CreateTravelPlan() {
         <div>
           <label htmlFor="startDate" className="block mb-1">시작 날짜</label>
           <input
+            data-cy="trip-start-date"
             id="startDate"
             type="date"
             {...register('startDate', { required: '시작 날짜를 선택해주세요.' })}
@@ -85,6 +87,7 @@ export default function CreateTravelPlan() {
         <div>
           <label htmlFor="endDate" className="block mb-1">종료 날짜</label>
           <input
+            data-cy="trip-end-date"
             id="endDate"
             type="date"
             {...register('endDate', { required: '종료 날짜를 선택해주세요.' })}
@@ -96,6 +99,7 @@ export default function CreateTravelPlan() {
         <div>
           <label htmlFor="destination" className="block mb-1">목적지</label>
           <input
+            data-cy="trip-destination-input"
             id="destination"
             {...register('destination', { required: '목적지를 입력해주세요.' })}
             className="w-full px-3 py-2 border rounded-md"
@@ -106,13 +110,14 @@ export default function CreateTravelPlan() {
         <div>
           <label htmlFor="description" className="block mb-1">설명</label>
           <textarea
+            data-cy="trip-description-input"
             id="description"
             {...register('description')}
             className="w-full px-3 py-2 border rounded-md"
           />
         </div>
 
-        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
+        <button data-cy="create-trip-button" type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
           여행 계획 만들기
         </button>
       </form>

@@ -39,7 +39,7 @@ export default function Home() {
         </div>
 
         <div className="text-center">
-          <Link href="/planner/create" className="bg-white text-blue-600 px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-100 transition duration-300">
+          <Link href="/planner/create" data-cy="planner-page-button" className="bg-white text-blue-600 px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-100 transition duration-300">
             여행 계획 시작하기
           </Link>
         </div>

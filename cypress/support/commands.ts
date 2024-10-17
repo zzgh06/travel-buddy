@@ -35,3 +35,16 @@
 //     }
 //   }
 // }
+
+
+Cypress.Commands.add('dataCy', (value: string) => {
+  return cy.get(`[data-cy=${value}]`) as unknown as Cypress.Chainable<Element>
+})
+
+Cypress.Commands.add('login', (email: string, password: string) => {
+  cy.dataCy("login-button").click();
+  cy.dataCy("email").type(email);
+  cy.dataCy("password").type(password);
+  cy.dataCy("login-submit-button").click();
+  cy.url().should('include', '/');
+})
