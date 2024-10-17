@@ -11,7 +11,13 @@
 //
 //
 // -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
+Cypress.Commands.add('login', (email: string, password: string) => {
+  cy.visit('/login')
+  cy.get('[data-cy=email-input]').type(email)
+  cy.get('[data-cy=password-input]').type(password)
+  cy.get('[data-cy=login-button]').click()
+})
+
 //
 //
 // -- This is a child command --
@@ -25,26 +31,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
-
 
 Cypress.Commands.add('dataCy', (value: string) => {
-  return cy.get(`[data-cy=${value}]`) as unknown as Cypress.Chainable<Element>
-})
-
-Cypress.Commands.add('login', (email: string, password: string) => {
-  cy.dataCy("login-button").click();
-  cy.dataCy("email").type(email);
-  cy.dataCy("password").type(password);
-  cy.dataCy("login-submit-button").click();
-  cy.url().should('include', '/');
+  return cy.get(`[data-cy=${value}]`)
 })
