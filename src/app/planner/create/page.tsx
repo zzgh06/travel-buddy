@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 type FormData = {
   title: string;
@@ -13,9 +14,16 @@ type FormData = {
 };
 
 export default function CreateTravelPlan() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+
+  // 인증 상태를 확인하고, 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
 
   const onSubmit = async (data: FormData) => {
     if (!session) {
@@ -40,6 +48,14 @@ export default function CreateTravelPlan() {
       alert('여행 계획 생성 중 오류가 발생했습니다.');
     }
   };
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (!session) {
+    return null; 
+  }
 
   return (
     <div className="max-w-md mx-auto mt-8">
