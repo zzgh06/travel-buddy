@@ -1,0 +1,43 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/auth";
+import Link from "next/link";
+import dbConnect from "@/lib/mongodb";
+import TravelPlan from "@/models/TravelPlan";
+import TravelPlanList from "@/components/TravelPlanList";
+
+async function getTravelPlans(userEmail: string) {
+  await dbConnect();
+  const plans = await TravelPlan.find({ userEmail }).sort({ createdAt: -1 });
+  return JSON.parse(JSON.stringify(plans));
+}
+
+export default async function PlannerPage(){
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user?.email) {
+    return (
+      <div className="max-w-[100%] mx-auto mt-8 p-4">
+        <h1 className="text-2xl font-bold mb-4">여행 계획</h1>
+        <p>이 페이지를 보려면 로그인이 필요합니다.</p>
+        <Link href="/login" className="text-blue-500 hover:underline">로그인하러 가기</Link>
+      </div>
+    )
+  }
+
+  const travelPlans = await getTravelPlans(session.user?.email || "");
+
+  return (
+    <div className="max-w-4xl mx-auto mt-8 p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">여행 계획</h1>
+        <Link
+          href="/planner/create"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          새 계획 만들기
+        </Link>
+      </div>
+      <TravelPlanList initialPlans={travelPlans} />
+    </div>
+  );
+}
