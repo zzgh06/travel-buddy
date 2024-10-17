@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
 
-export type TravelPlan = {
+type TravelPlan = {
   _id: string;
   title: string;
   startDate: string;
@@ -11,12 +12,7 @@ export type TravelPlan = {
   destination: string;
 };
 
-interface TravelPlanListProps {
-  initialPlans: TravelPlan[];
-}
-
-export default function TravelPlanList({ initialPlans }: TravelPlanListProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function TravelPlanList({ initialPlans }: { initialPlans: TravelPlan[] }) {
   const [plans, setPlans] = useState(initialPlans);
 
   return (
