@@ -18,11 +18,14 @@ interface Itinerary {
 interface ItineraryManagerProps {
   travelPlanId: string;
   initialItineraries: Itinerary[];
+  initialBudget: number;
+  onBudgetUpdate: (totalExpenses: number, remainingBudget: number) => void;
 }
 
-const ItineraryManager = ({ travelPlanId, initialItineraries }: ItineraryManagerProps) => {
+const ItineraryManager = ({ travelPlanId, initialItineraries, initialBudget, onBudgetUpdate }: ItineraryManagerProps) => {
   const [itineraries, setItineraries] = useState<Itinerary[]>(initialItineraries);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [budget] = useState<number>(initialBudget);
   const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const { register, handleSubmit, reset } = useForm<Itinerary>();
   const router = useRouter();
@@ -30,7 +33,8 @@ const ItineraryManager = ({ travelPlanId, initialItineraries }: ItineraryManager
   useEffect(() => {
     const total = itineraries.reduce((sum, itinerary) => sum + (itinerary.expense || 0), 0);
     setTotalExpenses(total);
-  }, [itineraries]);
+    onBudgetUpdate(total, budget - total);
+  }, [itineraries, budget, onBudgetUpdate]);
 
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -56,7 +60,6 @@ const ItineraryManager = ({ travelPlanId, initialItineraries }: ItineraryManager
       const url = editingId ? `/api/itineraries/${editingId}` : '/api/itineraries';
       const method = editingId ? 'PUT' : 'POST';
   
-      // 지출 금액을 숫자로 변환
       const expense = parseFloat(data.expense.toString()) || 0;
   
       const itineraryData = {
@@ -118,7 +121,13 @@ const ItineraryManager = ({ travelPlanId, initialItineraries }: ItineraryManager
     try {
       const response = await fetch(`/api/itineraries/${id}`, { method: 'DELETE' });
       if (response.ok) {
+        const deletedItinerary = itineraries.find(item => item._id === id);
         setItineraries(itineraries.filter(item => item._id !== id));
+        if (deletedItinerary) {
+          const newTotalExpenses = totalExpenses - (deletedItinerary.expense || 0);
+          setTotalExpenses(newTotalExpenses);
+          onBudgetUpdate(newTotalExpenses, budget - newTotalExpenses);
+        }
       } else {
         throw new Error('Failed to delete itinerary');
       }
@@ -155,6 +164,8 @@ const ItineraryManager = ({ travelPlanId, initialItineraries }: ItineraryManager
             <p>시간 : {itinerary.time}</p>
             <p>활동 : {itinerary.activity}</p>
             <p>장소 : {itinerary.location}</p>
+            <p>지출 : {itinerary.expense.toLocaleString()} 원</p>
+            {itinerary.expenseDescription && <p>지출 내역: {itinerary.expenseDescription}</p>}
             {itinerary.notes && <p>메모: {itinerary.notes}</p>}
             <div className='mt-2'>
               <button onClick={() => handleEdit(itinerary)} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2">

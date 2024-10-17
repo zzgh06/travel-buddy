@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-type TravelPlan = {
+interface TravelPlan {
   _id: string;
   title: string;
   startDate: string;
   endDate: string;
   destination: string;
-  description: string;
-};
+  description?: string;
+  budget: number;
+}
+
 
 export default function TravelPlanDetail({ travelPlan }: { travelPlan: TravelPlan }) {
   const [isEditing, setIsEditing] = useState(false);
