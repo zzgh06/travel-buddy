@@ -4,14 +4,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import SearchBar from './searchbar';
-
-type TravelPlan = {
-  _id: string;
-  title: string;
-  startDate: string;
-  endDate: string;
-  destination: string;
-};
+import { TravelPlan } from '@/types/types';
 
 export default function TravelPlanList({ initialPlans }: { initialPlans: TravelPlan[] }) {
   const [plans, setPlans] = useState(initialPlans);

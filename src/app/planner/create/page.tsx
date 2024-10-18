@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useCreateTravelPlan } from '@/hooks/useTravelPlanQueries';
 
 type FormData = {
   title: string;
@@ -18,6 +19,7 @@ export default function CreateTravelPlan() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const createTravelPlan = useCreateTravelPlan();
 
   // 인증 상태를 확인하고, 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -32,23 +34,16 @@ export default function CreateTravelPlan() {
       return;
     }
 
-    try {
-      const response = await fetch('/api/travel-plans', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
+    createTravelPlan.mutate(data, {
+      onSuccess: () => {
         router.push('/planner');
-        router.refresh()
-      } else {
-        throw new Error('여행 계획 생성에 실패했습니다.');
+        router.refresh();
+      },
+      onError: (error) => {
+        console.error('Error:', error);
+        alert('여행 계획 생성 중 오류가 발생했습니다.');
       }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('여행 계획 생성 중 오류가 발생했습니다.');
-    }
+    });
   };
 
   if (status === 'loading') {
