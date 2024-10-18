@@ -32,14 +32,13 @@ export default async function PlanDetailPage({ params }: { params: { id: string 
     redirect('/login');
   }
 
-  const { travelPlan, itineraries, totalExpenses, remainingBudget } = await getTravelPlanAndItineraries(params.id, session.user?.email);
+  const { travelPlan, itineraries, totalExpenses } = await getTravelPlanAndItineraries(params.id, session.user?.email);
 
   return (
     <ClientWrapper
       travelPlan={travelPlan}
       itineraries={itineraries}
       initialTotalExpenses={totalExpenses}
-      initialRemainingBudget={remainingBudget}
     />
   );
 }
