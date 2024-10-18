@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface TravelPlan {
@@ -13,11 +13,19 @@ interface TravelPlan {
   budget: number;
 }
 
+interface TravelPlanDetailProps {
+  travelPlan: TravelPlan;
+  onUpdate: (updatedTravelPlan: TravelPlan) => void;
+}
 
-export default function TravelPlanDetail({ travelPlan }: { travelPlan: TravelPlan }) {
+export default function TravelPlanDetail({ travelPlan, onUpdate }: TravelPlanDetailProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedPlan, setEditedPlan] = useState(travelPlan);
   const router = useRouter();
+
+  useEffect(() => {
+    setEditedPlan(travelPlan)
+  }, [travelPlan])
 
   const handleEdit = async () => {
     if (isEditing) {
@@ -30,6 +38,7 @@ export default function TravelPlanDetail({ travelPlan }: { travelPlan: TravelPla
 
         if (response.ok) {
           setIsEditing(false);
+          onUpdate(editedPlan);
           router.refresh();
         } else {
           throw new Error('여행 계획 수정에 실패했습니다.');
@@ -65,7 +74,13 @@ export default function TravelPlanDetail({ travelPlan }: { travelPlan: TravelPla
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setEditedPlan(prev => ({ ...prev, [name]: value }));
+    const updatedValue = name === 'budget' ? Number(value) : value;
+    setEditedPlan(prev => ({ ...prev, [name]: updatedValue }));
+
+    if (name === 'budget') {
+      const newBudget = Number(value);
+      onUpdate({ ...editedPlan, budget: newBudget });
+    }
   };
 
   return (
@@ -120,6 +135,27 @@ export default function TravelPlanDetail({ travelPlan }: { travelPlan: TravelPla
           `${new Date(travelPlan.startDate).toLocaleDateString()} - ${new Date(travelPlan.endDate).toLocaleDateString()}`
         )}
       </div>
+      <div className="mb-4">
+        <strong>예산:</strong>{' '}
+        {isEditing ? (
+          <input
+            type="number"
+            name="budget"
+            step="10000"
+            value={editedPlan.budget}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        ) : (
+          `${editedPlan.budget.toLocaleString()} 원`
+        )}
+      </div>
+      {/* <div className="mb-4">
+        <strong>총 지출:</strong> {totalExpenses.toLocaleString()} 원
+      </div>
+      <div className="mb-4">
+        <strong>남은 예산:</strong> {(editedPlan.budget - totalExpenses).toLocaleString()} 원
+      </div> */}
       <div className="mb-6">
         <strong>설명:</strong><br />
         {isEditing ? (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import TravelPlanDetail from './TravelPlanDetail';
 import BudgetTracker from './BudgetTracker';
 import ItineraryManager from './ItineraryManager';
@@ -9,26 +9,41 @@ interface ClientWrapperProps {
   travelPlan: any;
   itineraries: any[];
   initialTotalExpenses: number;
-  initialRemainingBudget: number;
 }
 
 export default function ClientWrapper({
-  travelPlan,
-  itineraries,
+  travelPlan: initialTravelPlan,
+  itineraries: initialItineraries,
   initialTotalExpenses,
-  initialRemainingBudget
 }: ClientWrapperProps) {
+  const [travelPlan, setTravelPlan] = useState(initialTravelPlan);
+  const [itineraries, setItineraries] = useState(initialItineraries);
   const [totalExpenses, setTotalExpenses] = useState(initialTotalExpenses);
-  const [remainingBudget, setRemainingBudget] = useState(initialRemainingBudget);
+  const [remainingBudget, setRemainingBudget] = useState(initialTravelPlan.budget - initialTotalExpenses);
 
-  const handleBudgetUpdate = (newTotalExpenses: number, newRemainingBudget: number) => {
+  const updateBudget = useCallback((newBudget: number) => {
+    setTravelPlan((prev: any) => ({ ...prev, budget: newBudget }));
+    setRemainingBudget(newBudget - totalExpenses);
+  }, [totalExpenses]);
+
+  const updateExpenses = useCallback((newTotalExpenses: number) => {
     setTotalExpenses(newTotalExpenses);
-    setRemainingBudget(newRemainingBudget);
-  };
+    setRemainingBudget(travelPlan.budget - newTotalExpenses);
+  }, [travelPlan.budget]);
+
+  useEffect(() => {
+    setRemainingBudget(travelPlan.budget - totalExpenses);
+  }, [travelPlan.budget, totalExpenses]);
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-4">
-      <TravelPlanDetail travelPlan={travelPlan} />
+      <TravelPlanDetail 
+        travelPlan={travelPlan} 
+        onUpdate={(updatedPlan) => {
+          setTravelPlan(updatedPlan);
+          updateBudget(updatedPlan.budget);
+        }} 
+      />
       <BudgetTracker 
         budget={travelPlan.budget} 
         totalExpenses={totalExpenses} 
@@ -36,9 +51,12 @@ export default function ClientWrapper({
       />
       <ItineraryManager 
         travelPlanId={travelPlan._id} 
-        initialItineraries={itineraries} 
-        initialBudget={travelPlan.budget}
-        onBudgetUpdate={handleBudgetUpdate}
+        initialItineraries={itineraries}
+        onItinerariesUpdate={(updatedItineraries) => {
+          setItineraries(updatedItineraries);
+          const newTotalExpenses = updatedItineraries.reduce((sum, itinerary) => sum + (itinerary.expense || 0), 0);
+          updateExpenses(newTotalExpenses);
+        }}
       />
     </div>
   );

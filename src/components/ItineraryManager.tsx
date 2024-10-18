@@ -18,23 +18,18 @@ interface Itinerary {
 interface ItineraryManagerProps {
   travelPlanId: string;
   initialItineraries: Itinerary[];
-  initialBudget: number;
-  onBudgetUpdate: (totalExpenses: number, remainingBudget: number) => void;
+  onItinerariesUpdate: (itineraries: Itinerary[]) => void;
 }
 
-const ItineraryManager = ({ travelPlanId, initialItineraries, initialBudget, onBudgetUpdate }: ItineraryManagerProps) => {
+const ItineraryManager = ({ travelPlanId, initialItineraries, onItinerariesUpdate }: ItineraryManagerProps) => {
   const [itineraries, setItineraries] = useState<Itinerary[]>(initialItineraries);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [budget] = useState<number>(initialBudget);
-  const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const { register, handleSubmit, reset } = useForm<Itinerary>();
   const router = useRouter();
 
   useEffect(() => {
-    const total = itineraries.reduce((sum, itinerary) => sum + (itinerary.expense || 0), 0);
-    setTotalExpenses(total);
-    onBudgetUpdate(total, budget - total);
-  }, [itineraries, budget, onBudgetUpdate]);
+    onItinerariesUpdate(itineraries);
+  }, [itineraries, onItinerariesUpdate]);
 
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -88,11 +83,6 @@ const ItineraryManager = ({ travelPlanId, initialItineraries, initialBudget, onB
         setItineraries([...itineraries, result.data]);
       }
   
-      const newTotalExpenses = itineraries.reduce((sum, itinerary) => {
-        return sum + (itinerary._id === editingId ? expense : (itinerary.expense || 0));
-      }, editingId ? 0 : expense);
-      setTotalExpenses(newTotalExpenses);
-  
       reset({
         date: '',
         time: '',
@@ -121,13 +111,7 @@ const ItineraryManager = ({ travelPlanId, initialItineraries, initialBudget, onB
     try {
       const response = await fetch(`/api/itineraries/${id}`, { method: 'DELETE' });
       if (response.ok) {
-        const deletedItinerary = itineraries.find(item => item._id === id);
         setItineraries(itineraries.filter(item => item._id !== id));
-        if (deletedItinerary) {
-          const newTotalExpenses = totalExpenses - (deletedItinerary.expense || 0);
-          setTotalExpenses(newTotalExpenses);
-          onBudgetUpdate(newTotalExpenses, budget - newTotalExpenses);
-        }
       } else {
         throw new Error('Failed to delete itinerary');
       }
@@ -150,7 +134,7 @@ const ItineraryManager = ({ travelPlanId, initialItineraries, initialBudget, onB
           <input {...register('location')} placeholder='장소' required className='p-2 border rounded' />
           <input {...register('expense')} type="number" step="1000" placeholder='지출 금액' className='p-2 border rounded' />
           <input {...register('expenseDescription')} placeholder='지출 내역' className='p-2 border rounded' />
-          <textarea {...register('notes')} placeholder='메모' required className='p-2 border rounded col-span-2' />
+          <textarea {...register('notes')} placeholder='메모' className='p-2 border rounded col-span-2' />
         </div>
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
           {editingId ? '일정 수정' : '일정 추가'}
