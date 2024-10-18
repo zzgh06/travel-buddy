@@ -5,6 +5,7 @@ import TravelPlanDetail from './TravelPlanDetail';
 import BudgetTracker from './BudgetTracker';
 import ItineraryManager from './ItineraryManager';
 import { useTravelStore } from '@/store/useTravelStore';
+import BudgetAnalysis from './BudgetAnalysis';
 
 interface ClientWrapperProps {
   travelPlan: any;
@@ -26,6 +27,7 @@ export default function ClientWrapper({
     <div className="max-w-4xl mx-auto mt-8 p-4">
       <TravelPlanDetail />
       <BudgetTracker />
+      <BudgetAnalysis />
       <ItineraryManager travelPlanId={initialTravelPlan._id} />
     </div>
   );

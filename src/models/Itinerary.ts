@@ -1,3 +1,4 @@
+import { ItineraryCategory } from '@/types/types';
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IItinerary extends Document {
@@ -8,7 +9,7 @@ export interface IItinerary extends Document {
   location: string;
   notes?: string;
   expense: number;
-  expenseDescription?: string;
+  category: ItineraryCategory;
 }
 
 const ItinerarySchema: Schema = new Schema({
@@ -19,7 +20,7 @@ const ItinerarySchema: Schema = new Schema({
   location: { type: String, required: true },
   notes: { type: String },
   expense: { type: Number, default: 0 },
-  expenseDescription: { type: String }
+  category: { type: String, enum: ['accommodation', 'food', 'transportation', 'entertainment', 'other'], required: true }
 }, { timestamps: true });
 
 export default mongoose.models.Itinerary || mongoose.model<IItinerary>('Itinerary', ItinerarySchema);

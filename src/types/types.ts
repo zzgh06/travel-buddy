@@ -8,6 +8,8 @@ export interface TravelPlan {
   budget: number;
 }
 
+export type ItineraryCategory = 'accommodation' | 'food' | 'transportation' | 'entertainment' | 'other';
+
 export interface Itinerary {
   _id: string;
   date: string;
@@ -16,5 +18,5 @@ export interface Itinerary {
   location: string;
   notes?: string;
   expense: number;
-  expenseDescription?: string;
+  category: ItineraryCategory;
 }
