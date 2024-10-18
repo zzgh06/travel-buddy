@@ -3,7 +3,6 @@ import { useTravelStore } from '@/store/useTravelStore';
 
 const BudgetAnalysis = () => {
   const { travelPlan, categoryExpenses } = useTravelStore();
-  console.log("categoryExpenses", categoryExpenses)
   if (!travelPlan) return null;
 
   const categories = [
@@ -15,7 +14,7 @@ const BudgetAnalysis = () => {
   ];
 
   return (
-    <div className="mt-8">
+    <div className="mt-2">
       <h2 className="text-2xl font-bold mb-4">예산 분석</h2>
       <div className="grid grid-cols-2 gap-4">
         {categories.map((category) => (

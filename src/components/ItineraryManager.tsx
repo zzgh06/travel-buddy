@@ -9,9 +9,10 @@ import { Itinerary } from '@/types/types';
 
 interface ItineraryManagerProps {
   travelPlanId: string;
+  triggerRef: React.RefObject<HTMLDivElement>;
 }
 
-const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
+const ItineraryManager = ({ travelPlanId, triggerRef }: ItineraryManagerProps) => {
   const { itineraries, addItinerary, updateItinerary, deleteItinerary, updateCategoryExpenses } = useTravelStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const { register, handleSubmit, reset } = useForm<Itinerary>();
@@ -131,7 +132,7 @@ const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
         </div>
       </form>
 
-      <div>
+      <div ref={triggerRef}>
         {itineraries.map((itinerary) => (
           <div key={itinerary._id} className='p-4 mb-4 border rounded'>
             <p>날짜 : {new Date(itinerary.date).toLocaleDateString()}</p>
