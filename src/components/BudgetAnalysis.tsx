@@ -1,8 +1,17 @@
 import React from 'react';
 import { useTravelStore } from '@/store/useTravelStore';
+import { useTravelPlan } from '@/hooks/useTravelPlanQueries';
 
-const BudgetAnalysis = () => {
-  const { travelPlan, categoryExpenses } = useTravelStore();
+interface BudgetAnalysisProps {
+  travelPlanId: string;
+}
+
+const BudgetAnalysis = ({ travelPlanId }: BudgetAnalysisProps) => {
+  const { data: travelPlan, isLoading, error } = useTravelPlan(travelPlanId);
+  const { categoryExpenses } = useTravelStore();
+
+  if (isLoading) return <div>로딩 중...</div>;
+  if (error) return <div>에러 발생: {error.message}</div>;
   if (!travelPlan) return null;
 
   const categories = [

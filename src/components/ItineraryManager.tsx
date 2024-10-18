@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { useTravelStore } from '@/store/useTravelStore';
 import { Itinerary } from '@/types/types';
+import { useCreateItinerary, useDeleteItinerary, useItineraries, useUpdateItinerary } from '@/hooks/useTravelPlanQueries';
 
 
 interface ItineraryManagerProps {
@@ -13,51 +13,50 @@ interface ItineraryManagerProps {
 }
 
 const ItineraryManager = ({ travelPlanId, triggerRef }: ItineraryManagerProps) => {
-  const { itineraries, addItinerary, updateItinerary, deleteItinerary, updateCategoryExpenses } = useTravelStore();
+  const router = useRouter();
+  const { data: itineraries, refetch  } = useItineraries(travelPlanId);
+  const createItinerary = useCreateItinerary();
+  const updateItineraryMutation = useUpdateItinerary();
+  const deleteItineraryMutation = useDeleteItinerary();
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const { register, handleSubmit, reset } = useForm<Itinerary>();
-  const router = useRouter();
 
   const onSubmit = async (data: Itinerary) => {
-    try {
-      const url = editingId ? `/api/itineraries/${editingId}` : '/api/itineraries';
-      const method = editingId ? 'PUT' : 'POST';
+    const itineraryData = {
+      ...data,
+      travelPlanId,
+      expense: parseFloat(data.expense.toString()) || 0,
+    };
 
-      const expense = parseFloat(data.expense.toString()) || 0;
-
-      const itineraryData = {
-        ...data,
-        travelPlanId,
-        expense,
-      };
-
-      const response = await fetch(url, {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(itineraryData),
+    if (editingId) {
+      updateItineraryMutation.mutate(
+        { ...itineraryData, _id: editingId },
+        {
+          onSuccess: () => {
+            resetForm();
+            refetch();
+            router.refresh();
+            alert('일정이 수정되었습니다.');
+          },
+          onError: (error) => {
+            console.error('Error updating itinerary:', error);
+            alert('일정 수정에 실패했습니다.');
+          },
+        }
+      );
+    } else {
+      createItinerary.mutate(itineraryData, {
+        onSuccess: () => {
+          resetForm();
+          router.refresh();          
+          alert('새 일정이 추가되었습니다.');
+        },
+        onError: (error) => {
+          console.error('Error creating itinerary:', error);
+          alert('일정 생성에 실패했습니다.');
+        },
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save itinerary');
-      }
-
-      const result = await response.json();
-
-      if (editingId) {
-        updateItinerary(editingId, result.data);
-      } else {
-        addItinerary(result.data);
-      }
-
-      resetForm();
-      updateCategoryExpenses();
-
-      router.refresh();
-      alert(editingId ? '일정이 수정되었습니다.' : '새 일정이 추가되었습니다.');
-    } catch (error) {
-      console.error('Error saving itinerary:', error);
-      alert(error instanceof Error ? error.message : '일정 저장에 실패했습니다.');
     }
   };
 
@@ -67,20 +66,19 @@ const ItineraryManager = ({ travelPlanId, triggerRef }: ItineraryManagerProps) =
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      const response = await fetch(`/api/itineraries/${id}`, { method: 'DELETE' });
-      if (response.ok) {
-        deleteItinerary(id);
-        updateCategoryExpenses();
-      } else {
-        throw new Error('Failed to delete itinerary');
+    deleteItineraryMutation.mutate(
+      { _id: id, travelPlanId },
+      {
+        onSuccess: () => {
+          alert('일정을 삭제했습니다.');
+          router.refresh();           
+        },
+        onError: (error) => {
+          console.error('Error deleting itinerary:', error);
+          alert('일정 삭제에 실패했습니다.');
+        },
       }
-      reset();
-      alert('일정을 삭제했습니다.');
-    } catch (error) {
-      console.error('Error deleting itinerary:', error);
-      alert('일정 삭제에 실패했습니다.');
-    }
+    );
   };
 
   const resetForm = () => {
@@ -95,10 +93,6 @@ const ItineraryManager = ({ travelPlanId, triggerRef }: ItineraryManagerProps) =
     });
     setEditingId(null);
   };
-
-  useEffect(() => {
-    updateCategoryExpenses();
-  }, [itineraries, updateCategoryExpenses]);
 
   return (
     <div>
@@ -133,7 +127,7 @@ const ItineraryManager = ({ travelPlanId, triggerRef }: ItineraryManagerProps) =
       </form>
 
       <div ref={triggerRef}>
-        {itineraries.map((itinerary) => (
+        {itineraries?.map((itinerary) => (
           <div key={itinerary._id} className='p-4 mb-4 border rounded'>
             <p>날짜 : {new Date(itinerary.date).toLocaleDateString()}</p>
             <p>시간 : {itinerary.time}</p>

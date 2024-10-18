@@ -6,9 +6,10 @@ import { FaChevronDown, FaChartPie } from 'react-icons/fa';
 
 interface FloatingBudgetInfoProps {
   triggerRef: React.RefObject<HTMLDivElement>;
+  travelPlanId: string;
 }
 
-const FloatingBudgetInfo = ({ triggerRef }: FloatingBudgetInfoProps) => {
+const FloatingBudgetInfo = ({ triggerRef, travelPlanId }: FloatingBudgetInfoProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const floatingRef = useRef<HTMLDivElement>(null);
@@ -67,7 +68,7 @@ const FloatingBudgetInfo = ({ triggerRef }: FloatingBudgetInfoProps) => {
         isOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
       }`}>
         <div className="p-4">
-          <BudgetAnalysis />
+          <BudgetAnalysis travelPlanId={travelPlanId} />
         </div>
       </div>
       {!isOpen && (

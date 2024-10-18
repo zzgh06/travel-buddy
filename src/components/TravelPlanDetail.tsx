@@ -2,38 +2,38 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTravelStore } from '@/store/useTravelStore';
+import { useDeleteTravelPlan, useTravelPlan, useUpdateTravelPlan } from '@/hooks/useTravelPlanQueries';
 
-export default function TravelPlanDetail() {
-  const { travelPlan, setTravelPlan, updateBudget } = useTravelStore();
+interface TravelPlanDetailProps {
+  travelPlanId: string;
+}
+
+export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps) {
+  const router = useRouter();
+  const { data: travelPlan, isLoading } = useTravelPlan(travelPlanId);
+  const updateTravelPlan = useUpdateTravelPlan();
+  const deleteTravelPlan = useDeleteTravelPlan();
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedPlan, setEditedPlan] = useState(travelPlan);
-  const router = useRouter();
 
   useEffect(() => {
     setEditedPlan(travelPlan);
   }, [travelPlan]);
 
   const handleEdit = async () => {
-    if (isEditing) {
-      try {
-        const response = await fetch(`/api/travel-plans/${travelPlan?._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(editedPlan),
-        });
-
-        if (response.ok) {
+    if (isEditing && editedPlan) {
+      updateTravelPlan.mutate(editedPlan, {
+        onSuccess: () => {
           setIsEditing(false);
-          setTravelPlan(editedPlan!);
+          alert('여행 계획 수정에 성공했습니다');
           router.refresh();
-        } else {
-          throw new Error('여행 계획 수정에 실패했습니다.');
+        },
+        onError: (error) => {
+          console.error('Error:', error);
+          alert('여행 계획 수정 중 오류가 발생했습니다.');
         }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('여행 계획 수정 중 오류가 발생했습니다.');
-      }
+      });
     } else {
       setIsEditing(true);
     }
@@ -41,38 +41,26 @@ export default function TravelPlanDetail() {
 
   const handleDelete = async () => {
     if (confirm('정말로 이 여행 계획을 삭제하시겠습니까?')) {
-      try {
-        const response = await fetch(`/api/travel-plans/${travelPlan?._id}`, {
-          method: 'DELETE',
-        });
-
-        if (response.ok) {
+      deleteTravelPlan.mutate(travelPlanId, {
+        onSuccess: () => {
           router.push('/planner');
           router.refresh();
-        } else {
-          throw new Error('여행 계획 삭제에 실패했습니다.');
+        },
+        onError: (error) => {
+          console.error('Error:', error);
+          alert('여행 계획 삭제 중 오류가 발생했습니다.');
         }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('여행 계획 삭제 중 오류가 발생했습니다.');
-      }
+      });
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     const updatedValue = name === 'budget' ? Number(value) : value;
-    setEditedPlan(prev => prev ? { ...prev, [name]: updatedValue } : null);
-
-    if (name === 'budget') {
-      const newBudget = Number(value);
-      updateBudget(newBudget);
-    }
+    setEditedPlan((prev: any) => prev ? { ...prev, [name]: updatedValue } : null);
   };
 
-  if (!travelPlan) {
-    return <div>여행 계획을 불러오는 중...</div>;
-  }
+  if (isLoading) return <div>여행 계획을 불러오는 중...</div>;
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-4">
@@ -86,7 +74,7 @@ export default function TravelPlanDetail() {
             className="w-full px-3 py-2 border rounded-md"
           />
         ) : (
-          travelPlan.title
+          travelPlan?.title
         )}
       </h1>
       <div className="mb-4">
@@ -100,7 +88,7 @@ export default function TravelPlanDetail() {
             className="w-full px-3 py-2 border rounded-md"
           />
         ) : (
-          travelPlan.destination
+          travelPlan?.destination
         )}
       </div>
       <div className="mb-4">
@@ -123,7 +111,7 @@ export default function TravelPlanDetail() {
             />
           </>
         ) : (
-          `${new Date(travelPlan.startDate).toLocaleDateString()} - ${new Date(travelPlan.endDate).toLocaleDateString()}`
+          `${new Date(travelPlan?.startDate || "").toLocaleDateString()} - ${new Date(travelPlan?.endDate || "").toLocaleDateString()}`
         )}
       </div>
       <div className="mb-4">
@@ -138,7 +126,7 @@ export default function TravelPlanDetail() {
             className="w-full px-3 py-2 border rounded-md"
           />
         ) : (
-          `${travelPlan.budget.toLocaleString()} 원`
+          `${travelPlan?.budget.toLocaleString()} 원`
         )}
       </div>
       <div className="mb-6">
@@ -152,7 +140,7 @@ export default function TravelPlanDetail() {
             rows={4}
           />
         ) : (
-          travelPlan.description
+          travelPlan?.description
         )}
       </div>
       <div className="flex space-x-4">

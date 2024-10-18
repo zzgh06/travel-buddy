@@ -2,10 +2,15 @@
 
 import React from 'react';
 import { useTravelStore } from '@/store/useTravelStore';
+import { useTravelPlan } from '@/hooks/useTravelPlanQueries';
 
-const BudgetTracker = () => {
-  const { travelPlan, totalExpenses, remainingBudget } = useTravelStore();
-  
+interface BudgetTrackerProps {
+  travelPlanId: string;
+}
+
+const BudgetTracker = ({ travelPlanId }: BudgetTrackerProps) => {
+  const { totalExpenses, remainingBudget } = useTravelStore();
+  const { data: travelPlan, isLoading } = useTravelPlan(travelPlanId);
   if (!travelPlan) return null;
 
   const percentageSpent = (totalExpenses / travelPlan.budget) * 100;
