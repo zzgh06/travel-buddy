@@ -2,35 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTravelStore } from '@/store/useTravelStore';
 
-interface TravelPlan {
-  _id: string;
-  title: string;
-  startDate: string;
-  endDate: string;
-  destination: string;
-  description?: string;
-  budget: number;
-}
-
-interface TravelPlanDetailProps {
-  travelPlan: TravelPlan;
-  onUpdate: (updatedTravelPlan: TravelPlan) => void;
-}
-
-export default function TravelPlanDetail({ travelPlan, onUpdate }: TravelPlanDetailProps) {
+export default function TravelPlanDetail() {
+  const { travelPlan, setTravelPlan, updateBudget } = useTravelStore();
   const [isEditing, setIsEditing] = useState(false);
   const [editedPlan, setEditedPlan] = useState(travelPlan);
   const router = useRouter();
 
   useEffect(() => {
-    setEditedPlan(travelPlan)
-  }, [travelPlan])
+    setEditedPlan(travelPlan);
+  }, [travelPlan]);
 
   const handleEdit = async () => {
     if (isEditing) {
       try {
-        const response = await fetch(`/api/travel-plans/${travelPlan._id}`, {
+        const response = await fetch(`/api/travel-plans/${travelPlan?._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(editedPlan),
@@ -38,7 +25,7 @@ export default function TravelPlanDetail({ travelPlan, onUpdate }: TravelPlanDet
 
         if (response.ok) {
           setIsEditing(false);
-          onUpdate(editedPlan);
+          setTravelPlan(editedPlan!);
           router.refresh();
         } else {
           throw new Error('여행 계획 수정에 실패했습니다.');
@@ -55,7 +42,7 @@ export default function TravelPlanDetail({ travelPlan, onUpdate }: TravelPlanDet
   const handleDelete = async () => {
     if (confirm('정말로 이 여행 계획을 삭제하시겠습니까?')) {
       try {
-        const response = await fetch(`/api/travel-plans/${travelPlan._id}`, {
+        const response = await fetch(`/api/travel-plans/${travelPlan?._id}`, {
           method: 'DELETE',
         });
 
@@ -75,13 +62,17 @@ export default function TravelPlanDetail({ travelPlan, onUpdate }: TravelPlanDet
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     const updatedValue = name === 'budget' ? Number(value) : value;
-    setEditedPlan(prev => ({ ...prev, [name]: updatedValue }));
+    setEditedPlan(prev => prev ? { ...prev, [name]: updatedValue } : null);
 
     if (name === 'budget') {
       const newBudget = Number(value);
-      onUpdate({ ...editedPlan, budget: newBudget });
+      updateBudget(newBudget);
     }
   };
+
+  if (!travelPlan) {
+    return <div>여행 계획을 불러오는 중...</div>;
+  }
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-4">
@@ -90,7 +81,7 @@ export default function TravelPlanDetail({ travelPlan, onUpdate }: TravelPlanDet
           <input
             type="text"
             name="title"
-            value={editedPlan.title}
+            value={editedPlan?.title || ''}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded-md"
           />
@@ -104,7 +95,7 @@ export default function TravelPlanDetail({ travelPlan, onUpdate }: TravelPlanDet
           <input
             type="text"
             name="destination"
-            value={editedPlan.destination}
+            value={editedPlan?.destination || ''}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded-md"
           />
@@ -119,14 +110,14 @@ export default function TravelPlanDetail({ travelPlan, onUpdate }: TravelPlanDet
             <input
               type="date"
               name="startDate"
-              value={editedPlan.startDate.split('T')[0]}
+              value={editedPlan?.startDate.split('T')[0] || ''}
               onChange={handleChange}
               className="px-3 py-2 border rounded-md mr-2"
             />
             <input
               type="date"
               name="endDate"
-              value={editedPlan.endDate.split('T')[0]}
+              value={editedPlan?.endDate.split('T')[0] || ''}
               onChange={handleChange}
               className="px-3 py-2 border rounded-md"
             />
@@ -142,26 +133,20 @@ export default function TravelPlanDetail({ travelPlan, onUpdate }: TravelPlanDet
             type="number"
             name="budget"
             step="10000"
-            value={editedPlan.budget}
+            value={editedPlan?.budget || 0}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded-md"
           />
         ) : (
-          `${editedPlan.budget.toLocaleString()} 원`
+          `${travelPlan.budget.toLocaleString()} 원`
         )}
       </div>
-      {/* <div className="mb-4">
-        <strong>총 지출:</strong> {totalExpenses.toLocaleString()} 원
-      </div>
-      <div className="mb-4">
-        <strong>남은 예산:</strong> {(editedPlan.budget - totalExpenses).toLocaleString()} 원
-      </div> */}
       <div className="mb-6">
         <strong>설명:</strong><br />
         {isEditing ? (
           <textarea
             name="description"
-            value={editedPlan.description}
+            value={editedPlan?.description || ''}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded-md"
             rows={4}
