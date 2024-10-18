@@ -1,13 +1,14 @@
+'use client';
+
 import React from 'react';
+import { useTravelStore } from '@/store/useTravelStore';
 
-interface BudgetTrackerProps {
-  budget: number;
-  totalExpenses: number;
-  remainingBudget: number;
-}
+const BudgetTracker = () => {
+  const { travelPlan, totalExpenses, remainingBudget } = useTravelStore();
+  
+  if (!travelPlan) return null;
 
-const BudgetTracker = ({ budget, totalExpenses, remainingBudget }: BudgetTrackerProps) => {
-  const percentageSpent = (totalExpenses / budget) * 100;
+  const percentageSpent = (totalExpenses / travelPlan.budget) * 100;
   const isOverBudget = remainingBudget < 0;
   
   return (
@@ -16,7 +17,7 @@ const BudgetTracker = ({ budget, totalExpenses, remainingBudget }: BudgetTracker
       <div className="mb-4 grid grid-cols-2 gap-4">
         <div>
           <p className="text-gray-600">총 예산</p>
-          <p className="text-2xl font-bold">{budget.toLocaleString()} 원</p>
+          <p className="text-2xl font-bold">{travelPlan.budget.toLocaleString()} 원</p>
         </div>
         <div>
           <p className="text-gray-600">총 지출</p>

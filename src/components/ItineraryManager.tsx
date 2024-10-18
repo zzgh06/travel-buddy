@@ -1,99 +1,57 @@
 'use client';
 
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTravelStore } from '@/store/useTravelStore';
+import { Itinerary } from '@/types/types';
 
-interface Itinerary {
-  _id: string;
-  date: string;
-  time: string;
-  activity: string;
-  location: string;
-  notes?: string;
-  expense: number;
-  expenseDescription?: string;
-}
 
 interface ItineraryManagerProps {
   travelPlanId: string;
-  initialItineraries: Itinerary[];
-  onItinerariesUpdate: (itineraries: Itinerary[]) => void;
 }
 
-const ItineraryManager = ({ travelPlanId, initialItineraries, onItinerariesUpdate }: ItineraryManagerProps) => {
-  const [itineraries, setItineraries] = useState<Itinerary[]>(initialItineraries);
+const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
+  const { itineraries, addItinerary, updateItinerary, deleteItinerary } = useTravelStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const { register, handleSubmit, reset } = useForm<Itinerary>();
   const router = useRouter();
-
-  useEffect(() => {
-    onItinerariesUpdate(itineraries);
-  }, [itineraries, onItinerariesUpdate]);
-
-  useEffect(() => {
-    const fetchItineraries = async () => {
-      try {
-        const response = await fetch(`/api/travel-plans/${travelPlanId}`);
-        if (response.ok) {
-          const { data } = await response.json();
-          setItineraries(data.itineraries);
-        } else {
-          throw new Error('Failed to fetch itineraries');
-        }
-      } catch (error) {
-        console.error('Error fetching itineraries:', error);
-        alert('일정을 불러오는데 실패했습니다.');
-      }
-    };
-
-    fetchItineraries();
-  }, [travelPlanId]);
 
   const onSubmit = async (data: Itinerary) => {
     try {
       const url = editingId ? `/api/itineraries/${editingId}` : '/api/itineraries';
       const method = editingId ? 'PUT' : 'POST';
-  
+
       const expense = parseFloat(data.expense.toString()) || 0;
-  
+
       const itineraryData = {
         ...data,
         travelPlanId,
         expense,
         expenseDescription: data.expenseDescription || ''
       };
-  
+
       const response = await fetch(url, {
         method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(itineraryData),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to save itinerary');
       }
-  
+
       const result = await response.json();
-      
+
       if (editingId) {
-        setItineraries(itineraries.map(item => item._id === editingId ? result.data : item));
+        updateItinerary(editingId, result.data);
       } else {
-        setItineraries([...itineraries, result.data]);
+        addItinerary(result.data);
       }
-  
-      reset({
-        date: '',
-        time: '',
-        activity: '',
-        location: '',
-        notes: '',
-        expense: 0,
-        expenseDescription: ''
-      });
-      setEditingId(null);
-  
+
+      resetForm();
+
       router.refresh();
       alert(editingId ? '일정이 수정되었습니다.' : '새 일정이 추가되었습니다.');
     } catch (error) {
@@ -111,7 +69,7 @@ const ItineraryManager = ({ travelPlanId, initialItineraries, onItinerariesUpdat
     try {
       const response = await fetch(`/api/itineraries/${id}`, { method: 'DELETE' });
       if (response.ok) {
-        setItineraries(itineraries.filter(item => item._id !== id));
+        deleteItinerary(id);
       } else {
         throw new Error('Failed to delete itinerary');
       }
@@ -121,6 +79,19 @@ const ItineraryManager = ({ travelPlanId, initialItineraries, onItinerariesUpdat
       console.error('Error deleting itinerary:', error);
       alert('일정 삭제에 실패했습니다.');
     }
+  };
+
+  const resetForm = () => {
+    reset({
+      date: '',
+      time: '',
+      activity: '',
+      location: '',
+      expense: 0,
+      expenseDescription: '',
+      notes: ''
+    });
+    setEditingId(null);
   };
 
   return (
@@ -136,9 +107,16 @@ const ItineraryManager = ({ travelPlanId, initialItineraries, onItinerariesUpdat
           <input {...register('expenseDescription')} placeholder='지출 내역' className='p-2 border rounded' />
           <textarea {...register('notes')} placeholder='메모' className='p-2 border rounded col-span-2' />
         </div>
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          {editingId ? '일정 수정' : '일정 추가'}
-        </button>
+        <div className="flex space-x-2">
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            {editingId ? '일정 수정' : '일정 추가'}
+          </button>
+          {editingId && (
+            <button type="button" onClick={resetForm} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+              수정 취소
+            </button>
+          )}
+        </div>
       </form>
 
       <div>
