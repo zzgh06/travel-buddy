@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useTravelStore } from '@/store/useTravelStore';
@@ -12,7 +12,7 @@ interface ItineraryManagerProps {
 }
 
 const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
-  const { itineraries, addItinerary, updateItinerary, deleteItinerary } = useTravelStore();
+  const { itineraries, addItinerary, updateItinerary, deleteItinerary, updateCategoryExpenses } = useTravelStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const { register, handleSubmit, reset } = useForm<Itinerary>();
   const router = useRouter();
@@ -28,7 +28,6 @@ const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
         ...data,
         travelPlanId,
         expense,
-        expenseDescription: data.expenseDescription || ''
       };
 
       const response = await fetch(url, {
@@ -51,6 +50,7 @@ const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
       }
 
       resetForm();
+      updateCategoryExpenses();
 
       router.refresh();
       alert(editingId ? '일정이 수정되었습니다.' : '새 일정이 추가되었습니다.');
@@ -70,6 +70,7 @@ const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
       const response = await fetch(`/api/itineraries/${id}`, { method: 'DELETE' });
       if (response.ok) {
         deleteItinerary(id);
+        updateCategoryExpenses();
       } else {
         throw new Error('Failed to delete itinerary');
       }
@@ -88,11 +89,15 @@ const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
       activity: '',
       location: '',
       expense: 0,
-      expenseDescription: '',
-      notes: ''
+      notes: '',
+      category: undefined,
     });
     setEditingId(null);
   };
+
+  useEffect(() => {
+    updateCategoryExpenses();
+  }, [itineraries, updateCategoryExpenses]);
 
   return (
     <div>
@@ -103,8 +108,15 @@ const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
           <input {...register('time')} type="time" required className='p-2 border rounded' />
           <input {...register('activity')} placeholder='활동' required className='p-2 border rounded' />
           <input {...register('location')} placeholder='장소' required className='p-2 border rounded' />
-          <input {...register('expense')} type="number" step="1000" placeholder='지출 금액' className='p-2 border rounded' />
-          <input {...register('expenseDescription')} placeholder='지출 내역' className='p-2 border rounded' />
+          <input {...register('expense')} type="number" step="10000" placeholder='지출 금액' className='p-2 border rounded' />
+          <select {...register('category')} required className='p-2 border rounded'>
+            <option value="">카테고리 선택</option>
+            <option value="accommodation">숙박</option>
+            <option value="food">식비</option>
+            <option value="transportation">교통비</option>
+            <option value="entertainment">엔터테인먼트</option>
+            <option value="other">기타</option>
+          </select>
           <textarea {...register('notes')} placeholder='메모' className='p-2 border rounded col-span-2' />
         </div>
         <div className="flex space-x-2">
@@ -127,7 +139,6 @@ const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
             <p>활동 : {itinerary.activity}</p>
             <p>장소 : {itinerary.location}</p>
             <p>지출 : {itinerary.expense.toLocaleString()} 원</p>
-            {itinerary.expenseDescription && <p>지출 내역: {itinerary.expenseDescription}</p>}
             {itinerary.notes && <p>메모: {itinerary.notes}</p>}
             <div className='mt-2'>
               <button onClick={() => handleEdit(itinerary)} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2">
