@@ -36,3 +36,17 @@ export interface ChecklistItem {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Place {
+  place_id: string;
+  name: string;
+  vicinity: string;
+  rating: number;
+  types: string[];
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
+}

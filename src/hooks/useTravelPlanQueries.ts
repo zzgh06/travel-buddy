@@ -9,7 +9,6 @@ export const useTravelPlans = (): UseQueryResult<TravelPlan[], Error> => {
     queryKey: ['travelPlans'],
     queryFn: async () => {
       const { data } = await axios.get('/api/travel-plans');
-      console.log("data", data)
       return data.data;
     }
   });
