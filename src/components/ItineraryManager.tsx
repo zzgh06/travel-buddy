@@ -11,7 +11,7 @@ interface ItineraryManagerProps {
   travelPlanId: string;
 }
 
-const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
+export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps){
   const router = useRouter();
   const { data: itineraries, refetch  } = useItineraries(travelPlanId);
   const createItinerary = useCreateItinerary();
@@ -148,5 +148,3 @@ const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
     </div>
   );
 };
-
-export default ItineraryManager;

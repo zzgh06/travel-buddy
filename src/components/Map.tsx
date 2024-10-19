@@ -18,7 +18,7 @@ interface Location {
   type: 'attraction' | 'restaurant' | 'hotel';
 }
 
-const Map = () => {
+export default function Map(){
   const [locations, setLocations] = useState<Location[]>([]);
   const [routeOrder, setRouteOrder] = useState<number[]>([]);
 
@@ -84,5 +84,3 @@ const Map = () => {
     </MapContainer>
   );
 };
-
-export default Map;

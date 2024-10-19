@@ -6,7 +6,7 @@ interface BudgetAnalysisProps {
   travelPlanId: string;
 }
 
-const BudgetAnalysis = ({ travelPlanId }: BudgetAnalysisProps) => {
+export default function BudgetAnalysis({ travelPlanId }: BudgetAnalysisProps) {
   const { data: travelPlan, isLoading, error } = useTravelPlan(travelPlanId);
   const { categoryExpenses } = useTravelStore();
 
@@ -52,5 +52,3 @@ const BudgetAnalysis = ({ travelPlanId }: BudgetAnalysisProps) => {
     </div>
   );
 };
-
-export default BudgetAnalysis;

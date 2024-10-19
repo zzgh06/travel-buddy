@@ -8,7 +8,7 @@ interface BudgetTrackerProps {
   travelPlanId: string;
 }
 
-const BudgetTracker = ({ travelPlanId }: BudgetTrackerProps) => {
+export default function BudgetTracker({ travelPlanId }: BudgetTrackerProps) {
   const { totalExpenses, remainingBudget } = useTravelStore();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data: travelPlan, isLoading } = useTravelPlan(travelPlanId);
@@ -67,5 +67,3 @@ const BudgetTracker = ({ travelPlanId }: BudgetTrackerProps) => {
     </div>
   );
 };
-
-export default BudgetTracker;
