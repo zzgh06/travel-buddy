@@ -11,8 +11,12 @@ const BudgetAnalysis = ({ travelPlanId }: BudgetAnalysisProps) => {
   const { categoryExpenses } = useTravelStore();
 
   if (isLoading) return <div>로딩 중...</div>;
+
   if (error) return <div>에러 발생: {error.message}</div>;
+
   if (!travelPlan) return null;
+
+  const totalBudget = travelPlan.budget || 0;
 
   const categories = [
     { name: '숙박', value: categoryExpenses.accommodation, color: 'bg-blue-500' },
@@ -36,11 +40,11 @@ const BudgetAnalysis = ({ travelPlanId }: BudgetAnalysisProps) => {
             <div className="mt-2 bg-gray-200 rounded-full h-2">
               <div
                 className={`${category.color} rounded-full h-2`}
-                style={{ width: `${(category.value / travelPlan.budget) * 100}%` }}
+                style={{ width: `${totalBudget ? (category.value / travelPlan.budget) * 100 : 0}%` }}
               ></div>
             </div>
             <p className="text-sm text-gray-600 mt-1">
-              전체 예산의 {((category.value / travelPlan.budget) * 100).toFixed(1)}%
+              전체 예산의 {totalBudget ? ((category.value / travelPlan.budget) * 100).toFixed(1) : 0}%
             </p>
           </div>
         ))}

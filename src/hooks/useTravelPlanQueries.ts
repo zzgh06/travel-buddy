@@ -1,4 +1,4 @@
-import { Itinerary, TravelPlan } from '@/types/types';
+import { ChecklistItem, Itinerary, TravelPlan } from '@/types/types';
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -100,6 +100,49 @@ export const useDeleteItinerary = () => {
     mutationFn: (itinerary: { _id: string; travelPlanId: string }) => axios.delete(`/api/itineraries/${itinerary._id}`),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['itineraries', variables.travelPlanId] });
+    },
+  });
+};
+
+export const useChecklistItems = (travelPlanId: string): UseQueryResult<ChecklistItem[], Error> => {
+  return useQuery({
+    queryKey: ['checklistItems', travelPlanId],
+    queryFn: async () => {
+      const { data } = await axios.get(`/api/checklist-items?travelPlanId=${travelPlanId}`);
+      return data.data;
+    }
+  });
+};
+
+export const useCreateChecklistItem = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newItem: Omit<ChecklistItem, '_id' | 'createdAt' | 'updatedAt'>) => 
+      axios.post('/api/checklist-items', newItem),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['checklistItems', variables.travelPlanId] });
+    },
+  });
+};
+
+export const useUpdateChecklistItem = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (updatedItem: ChecklistItem) => 
+      axios.put(`/api/checklist-items/${updatedItem._id}`, updatedItem),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['checklistItems', variables.travelPlanId] });
+    },
+  });
+};
+
+export const useDeleteChecklistItem = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (item: { _id: string; travelPlanId: string }) => 
+      axios.delete(`/api/checklist-items/${item._id}`),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['checklistItems', variables.travelPlanId] });
     },
   });
 };
