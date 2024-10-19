@@ -34,7 +34,7 @@ export default function ClientWrapper({ travelPlanId }: ClientWrapperProps) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-4 relative">
+    <div className="max-w-4xl mx-auto mt-4 p-4 relative">
       <Suspense fallback={<TravelPlanDetailSkeleton />}>
         <TravelPlanDetail travelPlanId={travelPlanId} />
       </Suspense>

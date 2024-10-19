@@ -27,9 +27,12 @@ export default async function PlannerPage(){
   const travelPlans = await getTravelPlans(session.user?.email || "");
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">여행 계획</h1>
+    <div className="max-w-4xl mx-auto mt-8 px-6">
+      <div className="flex justify-between items-center px-3">
+        <div className="flex flex-col">
+        <h1 className="text-2xl font-bold pb-2">✈️ 나의 여행 계획</h1>
+        <p className="text-gray-500 ml-3">나만의 여행 계획을 편하게 작성해보세요.</p>
+        </div>
         <Link
           href="/planner/create"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
