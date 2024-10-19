@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import SearchBar from './searchbar';
 import { TravelPlan } from '@/types/types';
+import SearchBar from './Searchbar';
 
 export default function TravelPlanList({ initialPlans }: { initialPlans: TravelPlan[] }) {
   const [plans, setPlans] = useState(initialPlans);

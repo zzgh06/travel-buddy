@@ -7,7 +7,7 @@ interface SearchBarProps {
   onSearch: (searchTerm: string) => void;
 }
 
-const SearchBar = ({ onSearch }: SearchBarProps) => {
+export default function SearchBar({ onSearch }: SearchBarProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,5 +33,3 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
     </form>
   );
 };
-
-export default SearchBar;
