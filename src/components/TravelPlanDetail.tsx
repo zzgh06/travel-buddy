@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDeleteTravelPlan, useTravelPlan, useUpdateTravelPlan } from '@/hooks/useTravelPlanQueries';
+import { PencilIcon, TrashIcon } from '@heroicons/react/16/solid';
 
 interface TravelPlanDetailProps {
   travelPlanId: string;
@@ -10,7 +11,7 @@ interface TravelPlanDetailProps {
 
 export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps) {
   const router = useRouter();
-  const { data: travelPlan, isLoading } = useTravelPlan(travelPlanId);
+  const { data: travelPlan } = useTravelPlan(travelPlanId);
   const updateTravelPlan = useUpdateTravelPlan();
   const deleteTravelPlan = useDeleteTravelPlan();
 
@@ -60,101 +61,107 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
     setEditedPlan((prev: any) => prev ? { ...prev, [name]: updatedValue } : null);
   };
 
-  if (isLoading) return <div>여행 계획을 불러오는 중...</div>;
-
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-4">
-      <h1 className="text-3xl font-bold mb-6">
+    <div className="max-w-4xl mx-auto my-3 p-6 bg-white rounded-lg border border-gray-300">
+      <h1 className="text-3xl font-bold mb-8 text-gray-800 border-b pb-4">
         {isEditing ? (
           <input
             type="text"
             name="title"
             value={editedPlan?.title || ''}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         ) : (
           travelPlan?.title
         )}
       </h1>
-      <div className="mb-4">
-        <strong>목적지:</strong>{' '}
-        {isEditing ? (
-          <input
-            type="text"
-            name="destination"
-            value={editedPlan?.destination || ''}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md"
-          />
-        ) : (
-          travelPlan?.destination
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-md font-medium text-gray-700 mb-1">목적지</label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="destination"
+                value={editedPlan?.destination || ''}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            ) : (
+              <p className="text-lg text-gray-800">{travelPlan?.destination}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-md font-medium text-gray-700 mb-1">기간</label>
+            {isEditing ? (
+              <div className="flex space-x-2">
+                <input
+                  type="date"
+                  name="startDate"
+                  value={editedPlan?.startDate.split('T')[0] || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="date"
+                  name="endDate"
+                  value={editedPlan?.endDate.split('T')[0] || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            ) : (
+              <p className="text-lg text-gray-800">{`${new Date(travelPlan?.startDate || "").toLocaleDateString()} - ${new Date(travelPlan?.endDate || "").toLocaleDateString()}`}</p>
+            )}
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-md font-medium text-gray-700 mb-1">예산</label>
+            {isEditing ? (
+              <input
+                type="number"
+                name="budget"
+                step="10000"
+                value={editedPlan?.budget || 0}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            ) : (
+              <p className="text-lg text-gray-800">{`${travelPlan?.budget.toLocaleString()} 원`}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-md font-medium text-gray-700 mb-1">설명</label>
+            {isEditing ? (
+              <textarea
+                name="description"
+                value={editedPlan?.description || ''}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={4}
+              />
+            ) : (
+              <p className="text-lg text-gray-800">{travelPlan?.description}</p>
+            )}
+          </div>
+        </div>
       </div>
-      <div className="mb-4">
-        <strong>기간:</strong>{' '}
-        {isEditing ? (
-          <>
-            <input
-              type="date"
-              name="startDate"
-              value={editedPlan?.startDate.split('T')[0] || ''}
-              onChange={handleChange}
-              className="px-3 py-2 border rounded-md mr-2"
-            />
-            <input
-              type="date"
-              name="endDate"
-              value={editedPlan?.endDate.split('T')[0] || ''}
-              onChange={handleChange}
-              className="px-3 py-2 border rounded-md"
-            />
-          </>
-        ) : (
-          `${new Date(travelPlan?.startDate || "").toLocaleDateString()} - ${new Date(travelPlan?.endDate || "").toLocaleDateString()}`
-        )}
-      </div>
-      <div className="mb-4">
-        <strong>예산:</strong>{' '}
-        {isEditing ? (
-          <input
-            type="number"
-            name="budget"
-            step="10000"
-            value={editedPlan?.budget || 0}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md"
-          />
-        ) : (
-          `${travelPlan?.budget.toLocaleString()} 원`
-        )}
-      </div>
-      <div className="mb-6">
-        <strong>설명:</strong><br />
-        {isEditing ? (
-          <textarea
-            name="description"
-            value={editedPlan?.description || ''}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md"
-            rows={4}
-          />
-        ) : (
-          travelPlan?.description
-        )}
-      </div>
-      <div className="flex space-x-4">
+      <div className="flex justify-end space-x-4">
         <button
           onClick={handleEdit}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-black  hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition ease-in-out duration-150"
         >
+          <PencilIcon className="h-4 w-4 mr-2" />
           {isEditing ? '저장' : '수정'}
         </button>
         {!isEditing && (
           <button
             onClick={handleDelete}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150"
           >
+            <TrashIcon className="h-4 w-4 mr-2" />
             삭제
           </button>
         )}
