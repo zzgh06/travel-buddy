@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useCreateTravelPlan } from '@/hooks/useTravelPlanQueries';
+import { IChecklistItem } from '@/types/types';
 
 type FormData = {
   title: string;
@@ -12,6 +13,7 @@ type FormData = {
   endDate: string;
   destination: string;
   budget: number;
+  checklist: IChecklistItem[];
   description: string;
 };
 

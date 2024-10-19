@@ -10,10 +10,11 @@ interface BudgetTrackerProps {
 
 const BudgetTracker = ({ travelPlanId }: BudgetTrackerProps) => {
   const { totalExpenses, remainingBudget } = useTravelStore();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data: travelPlan, isLoading } = useTravelPlan(travelPlanId);
   if (!travelPlan) return null;
 
-  const percentageSpent = (totalExpenses / travelPlan.budget) * 100;
+  const percentageSpent = travelPlan.budget ? (totalExpenses / travelPlan.budget) * 100 : 0;
   const isOverBudget = remainingBudget < 0;
   
   return (

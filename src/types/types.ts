@@ -1,3 +1,9 @@
+export interface IChecklistItem {
+  id: string;
+  text: string;
+  isCompleted: boolean;
+}
+
 export interface TravelPlan {
   _id: string;
   title: string;
@@ -6,6 +12,7 @@ export interface TravelPlan {
   destination: string;
   description?: string;
   budget: number;
+  checklist: IChecklistItem[];
 }
 
 export type ItineraryCategory = 'accommodation' | 'food' | 'transportation' | 'entertainment' | 'other';
@@ -19,4 +26,13 @@ export interface Itinerary {
   notes?: string;
   expense: number;
   category: ItineraryCategory;
+}
+
+export interface ChecklistItem {
+  _id: string;
+  travelPlanId: string;
+  text: string;
+  isCompleted: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
