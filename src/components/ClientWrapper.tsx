@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import TravelPlanDetail from './TravelPlanDetail';
 import BudgetTracker from './BudgetTracker';
 import ItineraryManager from './ItineraryManager';
 import BudgetAnalysis from './BudgetAnalysis';
-import FloatingBudgetInfo from './FloatingBudgetInfo';
 import { useTravelPlan, useItineraries } from '@/hooks/useTravelPlanQueries';
 import { useTravelStore } from '@/store/useTravelStore';
-import ChecklistManager from './ChecklistManager';
+import FloatingToggleManager from './FloatingToggleManager';
 
 interface ClientWrapperProps {
   travelPlanId: string;
@@ -18,7 +17,6 @@ export default function ClientWrapper({ travelPlanId }: ClientWrapperProps) {
   const { data: travelPlan, isLoading: isLoadingTravelPlan } = useTravelPlan(travelPlanId);
   const { data: itineraries, isLoading: isLoadingItineraries } = useItineraries(travelPlanId);
   const { updateExpenses } = useTravelStore();
-  const itineraryManagerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (travelPlan && itineraries) {
@@ -39,9 +37,8 @@ export default function ClientWrapper({ travelPlanId }: ClientWrapperProps) {
       <TravelPlanDetail travelPlanId={travelPlanId} />
       <BudgetTracker travelPlanId={travelPlanId} />
       <BudgetAnalysis travelPlanId={travelPlanId} />
-      <ItineraryManager travelPlanId={travelPlanId} triggerRef={itineraryManagerRef} />
-      <ChecklistManager travelPlanId={travelPlanId} />
-      <FloatingBudgetInfo triggerRef={itineraryManagerRef} travelPlanId={travelPlanId} />
+      <ItineraryManager travelPlanId={travelPlanId} />
+      <FloatingToggleManager travelPlanId={travelPlanId} />
     </div>
   );
 }

@@ -9,10 +9,9 @@ import { useCreateItinerary, useDeleteItinerary, useItineraries, useUpdateItiner
 
 interface ItineraryManagerProps {
   travelPlanId: string;
-  triggerRef: React.RefObject<HTMLDivElement>;
 }
 
-const ItineraryManager = ({ travelPlanId, triggerRef }: ItineraryManagerProps) => {
+const ItineraryManager = ({ travelPlanId }: ItineraryManagerProps) => {
   const router = useRouter();
   const { data: itineraries, refetch  } = useItineraries(travelPlanId);
   const createItinerary = useCreateItinerary();
@@ -126,7 +125,7 @@ const ItineraryManager = ({ travelPlanId, triggerRef }: ItineraryManagerProps) =
         </div>
       </form>
 
-      <div ref={triggerRef}>
+      <div>
         {itineraries?.map((itinerary) => (
           <div key={itinerary._id} className='p-4 mb-4 border rounded'>
             <p>날짜 : {new Date(itinerary.date).toLocaleDateString()}</p>
