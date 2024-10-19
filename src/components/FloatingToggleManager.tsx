@@ -28,7 +28,7 @@ export default function FloatingToggleManager({ travelPlanId }: FloatingToggleMa
       className={`fixed right-6 bottom-8 bg-white shadow-lg rounded-lg transition-all duration-300 ease-in-out
       ${
         isOpen 
-          ? 'w-80 h-auto' 
+          ? 'w-[340px] h-auto' 
           : 'w-12 h-12 rounded-full overflow-hidden'
       }`}
     >
@@ -68,7 +68,7 @@ export default function FloatingToggleManager({ travelPlanId }: FloatingToggleMa
         </div>
       </div>
       <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-        isOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
+        isOpen ? 'max-h-[550px] opacity-100' : 'max-h-0 opacity-0'
       }`}>
         <div className="p-4">
           {activeComponent === 'checklist' ? (

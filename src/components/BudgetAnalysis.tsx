@@ -7,12 +7,9 @@ interface BudgetAnalysisProps {
 }
 
 export default function BudgetAnalysis({ travelPlanId }: BudgetAnalysisProps) {
-  const { data: travelPlan, isLoading, error } = useTravelPlan(travelPlanId);
+  const { data: travelPlan } = useTravelPlan(travelPlanId);
   const { categoryExpenses } = useTravelStore();
 
-  if (isLoading) return <div>로딩 중...</div>;
-
-  if (error) return <div>에러 발생: {error.message}</div>;
 
   if (!travelPlan) return null;
 
@@ -27,24 +24,26 @@ export default function BudgetAnalysis({ travelPlanId }: BudgetAnalysisProps) {
   ];
 
   return (
-    <div className="mt-2">
-      <h2 className="text-2xl font-bold mb-4">예산 분석</h2>
+    <div className="bg-white py-3 px-4 rounded-lg border border-gray-300">
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">예산 분석</h2>
       <div className="grid grid-cols-2 gap-4">
         {categories.map((category) => (
-          <div key={category.name} className="bg-white p-4 rounded shadow">
-            <h3 className="font-bold mb-2">{category.name}</h3>
-            <div className="flex items-center">
-              <div className={`w-2 h-2 rounded-full ${category.color} mr-2`}></div>
-              <span>{category.value.toLocaleString()} 원</span>
+          <div key={category.name} className="bg-gray-50 p-2 rounded-lg shadow">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-md font-semibold text-gray-800">{category.name}</h3>
+              <div className={`w-3 h-3 rounded-full ${category.color}`}></div>
             </div>
-            <div className="mt-2 bg-gray-200 rounded-full h-2">
+            <div className="text-lg font-bold mb-2 text-gray-900">
+              {category.value.toLocaleString()} 원
+            </div>
+            <div className="mb-2 bg-gray-200 rounded-full h-2 overflow-hidden">
               <div
-                className={`${category.color} rounded-full h-2`}
-                style={{ width: `${totalBudget ? (category.value / travelPlan.budget) * 100 : 0}%` }}
+                className={`${category.color} rounded-full h-full`}
+                style={{ width: `${totalBudget ? (category.value / totalBudget) * 100 : 0}%` }}
               ></div>
             </div>
-            <p className="text-sm text-gray-600 mt-1">
-              전체 예산의 {totalBudget ? ((category.value / travelPlan.budget) * 100).toFixed(1) : 0}%
+            <p className="text-sm text-gray-600">
+              전체 예산의 {totalBudget ? ((category.value / totalBudget) * 100).toFixed(1) : 0}%
             </p>
           </div>
         ))}

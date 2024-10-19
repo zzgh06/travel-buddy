@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import TravelPlanDetail from './TravelPlanDetail';
 import BudgetTracker from './BudgetTracker';
 import ItineraryManager from './ItineraryManager';
@@ -8,6 +8,7 @@ import BudgetAnalysis from './BudgetAnalysis';
 import { useTravelPlan, useItineraries } from '@/hooks/useTravelPlanQueries';
 import { useTravelStore } from '@/store/useTravelStore';
 import FloatingToggleManager from './FloatingToggleManager';
+import TravelPlanDetailSkeleton from './skeleton/TravelPlanDetailSkeleton';
 
 interface ClientWrapperProps {
   travelPlanId: string;
@@ -34,7 +35,9 @@ export default function ClientWrapper({ travelPlanId }: ClientWrapperProps) {
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-4 relative">
-      <TravelPlanDetail travelPlanId={travelPlanId} />
+      <Suspense fallback={<TravelPlanDetailSkeleton />}>
+        <TravelPlanDetail travelPlanId={travelPlanId} />
+      </Suspense>
       <BudgetTracker travelPlanId={travelPlanId} />
       <BudgetAnalysis travelPlanId={travelPlanId} />
       <ItineraryManager travelPlanId={travelPlanId} />

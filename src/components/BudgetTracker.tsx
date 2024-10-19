@@ -18,8 +18,8 @@ export default function BudgetTracker({ travelPlanId }: BudgetTrackerProps) {
   const isOverBudget = remainingBudget < 0;
   
   return (
-    <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h2 className="text-xl font-bold mb-4">예산 추적</h2>
+    <div className="bg-white rounded border border-gray-300 px-8 py-6 mb-3">
+      <h2 className="text-2xl font-bold mb-4">예산 추적</h2>
       <div className="mb-4 grid grid-cols-2 gap-4">
         <div>
           <p className="text-gray-600">총 예산</p>
@@ -39,17 +39,17 @@ export default function BudgetTracker({ travelPlanId }: BudgetTrackerProps) {
       <div className="relative pt-1">
         <div className="flex mb-2 items-center justify-between">
           <div>
-            <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
+            <span className="text-md font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
               예산 사용률
             </span>
           </div>
           <div className="text-right">
-            <span className="text-xs font-semibold inline-block text-blue-600">
+            <span className="text-xl font-semibold inline-block text-blue-600">
               {percentageSpent.toFixed(1)}%
             </span>
           </div>
         </div>
-        <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200">
+        <div className="overflow-hidden h-4 mb-4 text-xs flex rounded bg-blue-200">
           <div 
             style={{ width: `${Math.min(percentageSpent, 100)}%` }}
             className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${

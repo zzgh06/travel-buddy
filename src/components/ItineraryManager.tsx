@@ -5,15 +5,16 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { Itinerary } from '@/types/types';
 import { useCreateItinerary, useDeleteItinerary, useItineraries, useUpdateItinerary } from '@/hooks/useTravelPlanQueries';
+import { PencilIcon, TrashIcon } from '@heroicons/react/16/solid';
 
 
 interface ItineraryManagerProps {
   travelPlanId: string;
 }
 
-export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps){
+export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps) {
   const router = useRouter();
-  const { data: itineraries, refetch  } = useItineraries(travelPlanId);
+  const { data: itineraries, refetch } = useItineraries(travelPlanId);
   const createItinerary = useCreateItinerary();
   const updateItineraryMutation = useUpdateItinerary();
   const deleteItineraryMutation = useDeleteItinerary();
@@ -48,7 +49,7 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
       createItinerary.mutate(itineraryData, {
         onSuccess: () => {
           resetForm();
-          router.refresh();          
+          router.refresh();
           alert('새 일정이 추가되었습니다.');
         },
         onError: (error) => {
@@ -70,7 +71,7 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
       {
         onSuccess: () => {
           alert('일정을 삭제했습니다.');
-          router.refresh();           
+          router.refresh();
         },
         onError: (error) => {
           console.error('Error deleting itinerary:', error);
@@ -94,24 +95,45 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
   };
 
   return (
-    <div>
+    <div className='bg-white mt-3 p-6 rounded-lg border border-gray-300'>
       <h2 className='text-2xl font-bold mb-4'>일정 관리</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
         <div className='grid grid-cols-2 gap-4 mb-4'>
-          <input {...register('date')} type="date" required className='p-2 border rounded' />
-          <input {...register('time')} type="time" required className='p-2 border rounded' />
-          <input {...register('activity')} placeholder='활동' required className='p-2 border rounded' />
-          <input {...register('location')} placeholder='장소' required className='p-2 border rounded' />
-          <input {...register('expense')} type="number" step="10000" placeholder='지출 금액' className='p-2 border rounded' />
-          <select {...register('category')} required className='p-2 border rounded'>
-            <option value="">카테고리 선택</option>
-            <option value="accommodation">숙박</option>
-            <option value="food">식비</option>
-            <option value="transportation">교통비</option>
-            <option value="entertainment">엔터테인먼트</option>
-            <option value="other">기타</option>
-          </select>
-          <textarea {...register('notes')} placeholder='메모' className='p-2 border rounded col-span-2' />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">날짜</label>
+            <input {...register('date')} type="date" required className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">시간</label>
+            <input {...register('time')} type="time" required className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">활동</label>
+            <input {...register('activity')} placeholder='활동' required className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">장소</label>
+            <input {...register('location')} placeholder='장소' required className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">지출 금액</label>
+            <input {...register('expense')} type="number" step="10000" placeholder='지출 금액' className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">카테고리 선택</label>
+            <select {...register('category')} required className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent'>
+              <option value="">카테고리 선택</option>
+              <option value="accommodation">숙박</option>
+              <option value="food">식비</option>
+              <option value="transportation">교통비</option>
+              <option value="entertainment">엔터테인먼트</option>
+              <option value="other">기타</option>
+            </select>
+          </div>
+          <div className='col-span-full'>
+            <label className="block text-sm font-medium text-gray-700 mb-1">메모</label>
+            <textarea {...register('notes')} placeholder='메모' className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' rows={3} />
+          </div>
         </div>
         <div className="flex space-x-2">
           <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
@@ -125,20 +147,34 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
         </div>
       </form>
 
-      <div>
+      <div className="space-y-4">
         {itineraries?.map((itinerary) => (
-          <div key={itinerary._id} className='p-4 mb-4 border rounded'>
-            <p>날짜 : {new Date(itinerary.date).toLocaleDateString()}</p>
-            <p>시간 : {itinerary.time}</p>
-            <p>활동 : {itinerary.activity}</p>
-            <p>장소 : {itinerary.location}</p>
-            <p>지출 : {itinerary.expense.toLocaleString()} 원</p>
-            {itinerary.notes && <p>메모: {itinerary.notes}</p>}
-            <div className='mt-2'>
-              <button onClick={() => handleEdit(itinerary)} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2">
+          <div key={itinerary._id} className='p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-300 ease-in-out'>
+            <div className='flex justify-between items-start mb-2'>
+              <div>
+                <h3 className="text-lg font-semibold pb-2 text-gray-800">일정 : {itinerary.activity}</h3>
+                <p className="text-sm text-gray-600">장소: {itinerary.location}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-800">날짜 : {new Date(itinerary.date).toLocaleDateString()}</p>
+                <p className="text-sm text-gray-600">시간 : {itinerary.time}</p>
+              </div>
+            </div>
+            <p className="text-lg font-bold text-blue-600 mb-2">비용 : {itinerary.expense.toLocaleString()} 원</p>
+            {itinerary.notes && <p className="text-sm text-gray-700 mb-3">메모 : {itinerary.notes}</p>}
+            <div className='flex justify-end space-x-2'>
+              <button
+                onClick={() => handleEdit(itinerary)}
+                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-black  hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition ease-in-out duration-150"
+              >
+                <PencilIcon className="h-4 w-4 mr-2" />
                 수정
               </button>
-              <button onClick={() => handleDelete(itinerary._id)} className="bg-red-500 text-white px-2 py-1 rounded">
+              <button
+                onClick={() => handleDelete(itinerary._id)}
+                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150"
+              >
+                <TrashIcon className="h-4 w-4 mr-2" />
                 삭제
               </button>
             </div>
