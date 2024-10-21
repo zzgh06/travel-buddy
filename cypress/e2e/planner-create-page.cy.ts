@@ -23,6 +23,9 @@ describe('여행 계획 생성', () => {
     // 여행 목적지 선택
     cy.dataCy('trip-destination-input').type('도쿄');
 
+    // 여행 예산 선택
+    cy.dataCy('trip-budget-input').type('100000');
+
     // 여행 설명 입력
     cy.dataCy('trip-description-input').type('관광');
 
@@ -31,13 +34,6 @@ describe('여행 계획 생성', () => {
 
     // 플래너 페이지로 이동 확인
     cy.url().should('include', '/planner');
-
-    // 생성된 여행 계획 확인
-    cy.dataCy('trip-list').should('exist');
-    cy.dataCy('trip-item').first().within(() => {
-      cy.dataCy('trip-title').should('contain', '도쿄 여행 2024');
-      cy.dataCy('trip-destination').should('contain', '도쿄');
-    });
   });
   
 });

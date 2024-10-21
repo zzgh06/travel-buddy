@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -5,7 +6,6 @@ import { useRecommendationStore } from '../store/useRecommendationStore';
 import { useGooglePlaces } from '../hooks/useGooglePlaces';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import axios from 'axios';
 import { Place } from '@/types/types';
 
 const MapUpdater: React.FC<{ center: [number, number] }> = ({ center }) => {

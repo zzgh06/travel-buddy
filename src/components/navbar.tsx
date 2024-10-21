@@ -37,11 +37,11 @@ const Navbar = () => {
               <Link href="/" className="text-gray-900 inline-flex items-center px-1 hover:text-green-700 text-[17px] font-semibold">
                 홈
               </Link>
-              <Link href="/planner" className="text-gray-900 inline-flex items-center px-1 hover:text-green-700 text-[17px] font-semibold">
+              <Link href="/planner" data-cy="travel-planner-page" className="text-gray-900 inline-flex items-center px-1 hover:text-green-700 text-[17px] font-semibold">
                 여행 계획
               </Link>
               {status === 'authenticated' && (
-                <Link href="/profile" className="text-gray-900 inline-flex items-center px-1 hover:text-green-700 text-[17px] font-semibold">
+                <Link href="/profile" data-cy="user-profile" className="text-gray-900 inline-flex items-center px-1 hover:text-green-700 text-[17px] font-semibold">
                   프로필
                 </Link>
               )}
@@ -124,7 +124,7 @@ const Navbar = () => {
             <Link href="/" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
               홈
             </Link>
-            <Link href="/planner" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
+            <Link href="/planner" data-cy="travel-planner-page" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
               여행 계획
             </Link>
             {status === 'authenticated' && (

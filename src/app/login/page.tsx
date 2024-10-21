@@ -57,7 +57,7 @@ export default function Login() {
             로그인하여 여행 계획을 만들어 보세요
           </p>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
+        <form data-cy="login-form" onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
           <div className="space-y-4">
             <div>
               <label htmlFor="email" className="sr-only">Email</label>
