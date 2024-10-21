@@ -39,9 +39,10 @@ export default function FloatingChecklistManager({ travelPlanId }: FloatingCheck
   }
 
   return (
-    <div>
+    <div data-cy="checklist-manager">
       <div className="flex mb-3">
         <input
+          data-cy="checklist-input"
           type="text"
           value={newItemText}
           onChange={(e) => setNewItemText(e.target.value)}
@@ -49,6 +50,7 @@ export default function FloatingChecklistManager({ travelPlanId }: FloatingCheck
           placeholder="새 항목 추가"
         />
         <button
+          data-cy="checklist-add-button"
           onClick={handleAddItem}
           className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600"
         >
@@ -57,8 +59,9 @@ export default function FloatingChecklistManager({ travelPlanId }: FloatingCheck
       </div>
       <ul className="space-y-2 px-3 max-h-[300px] overflow-y-auto">
         {checklistItems?.map((item) => (
-          <li key={item._id} className="flex items-center">
+          <li data-cy="checklist-item" key={item._id} className="flex items-center">
             <input
+              data-cy="checklist-completed-checkbox"
               type="checkbox"
               checked={item.isCompleted}
               onChange={() => handleToggleItem(item)}
@@ -66,6 +69,7 @@ export default function FloatingChecklistManager({ travelPlanId }: FloatingCheck
             />
             <span className={`${item.isCompleted ? 'line-through' : ''} max-w-[190px]`}>{item.text}</span>
             <button
+              data-cy="checklist-delete-button"
               onClick={() => handleDeleteItem(item)}
               className="ml-auto text-red-500 hover:text-red-700"
             >
