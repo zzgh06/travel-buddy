@@ -8,6 +8,7 @@ import BudgetAnalysis from './BudgetAnalysis';
 import { useTravelPlan, useItineraries } from '@/hooks/useTravelPlanQueries';
 import { useTravelStore } from '@/store/useTravelStore';
 import FloatingToggleManager from './FloatingToggleManager';
+import TravelRouteMap from './TravelRouteMap';
 
 interface ClientWrapperProps {
   travelPlanId: string;
@@ -37,6 +38,7 @@ export default function ClientWrapper({ travelPlanId }: ClientWrapperProps) {
       <TravelPlanDetail travelPlanId={travelPlanId} />
       <BudgetTracker travelPlanId={travelPlanId} />
       <BudgetAnalysis travelPlanId={travelPlanId} />
+      <TravelRouteMap />
       <ItineraryManager travelPlanId={travelPlanId} />
       <FloatingToggleManager travelPlanId={travelPlanId} />
     </div>

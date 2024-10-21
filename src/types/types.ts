@@ -50,3 +50,10 @@ export interface Place {
     };
   };
 }
+
+export interface Location {
+  id: number;
+  name: string;
+  position: [number, number];
+  type: 'attraction' | 'restaurant' | 'hotel';
+}
