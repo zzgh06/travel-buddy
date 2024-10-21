@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTravelStore } from '@/store/useTravelStore';
 import { Location } from '@/types/types';
-
 
 export default function TravelRouteMap() {
   const {
@@ -16,7 +15,25 @@ export default function TravelRouteMap() {
   } = useTravelStore();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const mapRef = useRef<L.Map | null>(null);
+  const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
+  const placesService = useRef<google.maps.places.PlacesService | null>(null);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`;
+    script.async = true;
+    script.onload = () => {
+      autocompleteService.current = new google.maps.places.AutocompleteService();
+      placesService.current = new google.maps.places.PlacesService(document.createElement('div'));
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const createNumberedIcon = useCallback((number: number) => {
     return L.divIcon({
@@ -52,32 +69,49 @@ export default function TravelRouteMap() {
     return null;
   };
 
-  const handleSearch = async () => {
-    try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`);
-      const data = await response.json();
-      if (data && data.length > 0) {
-        const { lat, lon } = data[0];
+  const handleSearch = () => {
+    if (!autocompleteService.current) return;
+
+    const request: google.maps.places.AutocompletionRequest = {
+      input: searchQuery,
+      types: ['establishment']
+    };
+
+    autocompleteService.current.getPlacePredictions(request, (predictions, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+        setSearchResults(predictions);
+      }
+    });
+  };
+
+  const handleSelectPlace = (placeId: string) => {
+    if (!placesService.current) return;
+
+    const request: google.maps.places.PlaceDetailsRequest = {
+      placeId: placeId,
+      fields: ['name', 'geometry']
+    };
+
+    placesService.current.getDetails(request, (place, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK && place && place.geometry && place.geometry.location) {
         const newLocation: Location = {
           id: Date.now(),
-          name: searchQuery,
-          position: [parseFloat(lat), parseFloat(lon)],
+          name: place.name || '알 수 없는 장소',
+          position: [place.geometry.location.lat(), place.geometry.location.lng()],
           type: 'attraction',
         };
         addLocation(newLocation);
-        mapRef.current?.setView([parseFloat(lat), parseFloat(lon)], 13);
-      } else {
-        alert('검색 결과가 없습니다.');
+        mapRef.current?.setView(newLocation.position, 13);
+        setSearchResults([]);
+        setSearchQuery('');
       }
-    } catch (error) {
-      console.error('검색 중 오류 발생:', error);
-      alert('검색 중 오류가 발생했습니다.');
-    }
+    });
   };
 
   const handleMarkerDoubleClick = (id: number) => {
     removeLocation(id);
   };
+
   const routePositions = useMemo(() => routeOrder.map(id =>
     locations.find(loc => loc.id === id)?.position
   ).filter((pos): pos is [number, number] => pos !== undefined), [locations, routeOrder]);
@@ -93,6 +127,15 @@ export default function TravelRouteMap() {
         />
         <button onClick={handleSearch}>검색</button>
       </div>
+      {searchResults.length > 0 && (
+        <ul>
+          {searchResults.map((result) => (
+            <li key={result.place_id} onClick={() => handleSelectPlace(result.place_id)}>
+              {result.description}
+            </li>
+          ))}
+        </ul>
+      )}
       <MapContainer
         center={[37.5665, 126.9780]}
         zoom={13}
