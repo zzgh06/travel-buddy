@@ -166,7 +166,7 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
         </div>
         <div className="flex space-x-2">
           <button
-            data-cy={editingId ? 'edit-itinerary-manager-submit' : 'add-itinerary-manager-submit'}
+            data-cy={editingId ? 'itinerary-manager-edit-submit' : 'itinerary-manager-add-submit'}
             type="submit"
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
             {editingId ? '일정 수정' : '일정 추가'}
@@ -196,7 +196,7 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
             {itinerary.notes && <p data-cy="itinerary-notes" className="text-sm text-gray-700 mb-3">메모 : {itinerary.notes}</p>}
             <div className='flex justify-end space-x-2'>
               <button
-                data-cy="edit-itinerary-item-button"
+                data-cy="itinerary-item-edit-button"
                 onClick={() => handleEdit(itinerary)}
                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-black  hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition ease-in-out duration-150"
               >
@@ -204,7 +204,7 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
                 수정
               </button>
               <button
-                data-cy="delete-itinerary-item-button"
+                data-cy="itinerary-item-delete-button"
                 onClick={() => handleDelete(itinerary._id)}
                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150"
               >

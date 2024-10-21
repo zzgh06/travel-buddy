@@ -43,6 +43,7 @@ export default function FloatingToggleManager({ travelPlanId }: FloatingToggleMa
         </h3>
         <div className="flex items-center">
           <button 
+            data-cy="toggle-button"
             onClick={toggleComponent}
             className="flex items-center p-1 px-2 mr-2 hover:bg-gray-200 rounded-full transition-colors duration-200"
             title={activeComponent === 'checklist' ? '예산 분석으로 전환' : '체크리스트로 전환'}
