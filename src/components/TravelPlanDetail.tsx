@@ -61,11 +61,16 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
     setEditedPlan((prev: any) => prev ? { ...prev, [name]: updatedValue } : null);
   };
 
+  if (!travelPlan) {
+    return <div data-cy="travel-plan-detail-loading">Loading travel plan details...</div>;
+  }
+
   return (
-    <div className="max-w-4xl mx-auto my-3 p-6 bg-white rounded-lg border border-gray-300">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800 border-b pb-4">
+    <div data-cy="travel-plan-detail" className="max-w-4xl mx-auto my-3 p-6 bg-white rounded-lg border border-gray-300">
+      <h1 data-cy="travel-plan-title" className="text-3xl font-bold mb-8 text-gray-800 border-b pb-4">
         {isEditing ? (
           <input
+            data-cy="travel-plan-title-input"
             type="text"
             name="title"
             value={editedPlan?.title || ''}
@@ -78,10 +83,11 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="space-y-4">
-          <div>
+          <div data-cy="travel-plan-destination">
             <label className="block text-md font-medium text-gray-700 mb-1">목적지</label>
             {isEditing ? (
               <input
+                data-cy="travel-plan-destination-input"
                 type="text"
                 name="destination"
                 value={editedPlan?.destination || ''}
@@ -89,7 +95,7 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             ) : (
-              <p className="text-lg text-gray-800">{travelPlan?.destination}</p>
+              <p data-cy="travel-plan-destination" className="text-lg text-gray-800">{travelPlan?.destination}</p>
             )}
           </div>
           <div>
@@ -97,6 +103,7 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
             {isEditing ? (
               <div className="flex space-x-2">
                 <input
+                  data-cy="travel-plan-startDate-input"
                   type="date"
                   name="startDate"
                   value={editedPlan?.startDate.split('T')[0] || ''}
@@ -104,6 +111,7 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
                   className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
+                  data-cy="travel-plan-endDate-input"
                   type="date"
                   name="endDate"
                   value={editedPlan?.endDate.split('T')[0] || ''}
@@ -112,7 +120,7 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
                 />
               </div>
             ) : (
-              <p className="text-lg text-gray-800">{`${new Date(travelPlan?.startDate || "").toLocaleDateString()} - ${new Date(travelPlan?.endDate || "").toLocaleDateString()}`}</p>
+              <p data-cy="travel-plan-date" className="text-lg text-gray-800">{`${new Date(travelPlan?.startDate || "").toLocaleDateString()} - ${new Date(travelPlan?.endDate || "").toLocaleDateString()}`}</p>
             )}
           </div>
         </div>
@@ -121,6 +129,7 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
             <label className="block text-md font-medium text-gray-700 mb-1">예산</label>
             {isEditing ? (
               <input
+                data-cy="travel-plan-budget-input"
                 type="number"
                 name="budget"
                 step="10000"
@@ -129,13 +138,14 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             ) : (
-              <p className="text-lg text-gray-800">{`${travelPlan?.budget.toLocaleString()} 원`}</p>
+              <p data-cy="travel-plan-budget" className="text-lg text-gray-800">{`${travelPlan?.budget.toLocaleString()} 원`}</p>
             )}
           </div>
           <div>
             <label className="block text-md font-medium text-gray-700 mb-1">설명</label>
             {isEditing ? (
               <textarea
+                data-cy="travel-plan-description-textarea"
                 name="description"
                 value={editedPlan?.description || ''}
                 onChange={handleChange}
@@ -143,13 +153,14 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
                 rows={4}
               />
             ) : (
-              <p className="text-lg text-gray-800">{travelPlan?.description}</p>
+              <p  data-cy="travel-plan-description" className="text-lg text-gray-800">{travelPlan?.description}</p>
             )}
           </div>
         </div>
       </div>
       <div className="flex justify-end space-x-4">
         <button
+          data-cy={isEditing ? 'plan-detail-edit-button' : 'plan-detail-button'}
           onClick={handleEdit}
           className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-black  hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition ease-in-out duration-150"
         >
@@ -158,6 +169,7 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
         </button>
         {!isEditing && (
           <button
+            data-cy="plan-detail-delete-button"
             onClick={handleDelete}
             className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150"
           >

@@ -24,11 +24,11 @@ export default function BudgetAnalysis({ travelPlanId }: BudgetAnalysisProps) {
   ];
 
   return (
-    <div className="bg-white py-3 px-4 rounded-lg border border-gray-300">
+    <div data-cy="budget-analysis" className="bg-white py-3 px-4 rounded-lg border border-gray-300">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">예산 분석</h2>
       <div className="grid grid-cols-2 gap-4">
         {categories.map((category) => (
-          <div key={category.name} className="bg-gray-50 p-2 rounded-lg shadow">
+          <div data-cy="category-budget" key={category.name} className="bg-gray-50 p-2 rounded-lg shadow">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-md font-semibold text-gray-800">{category.name}</h3>
               <div className={`w-3 h-3 rounded-full ${category.color}`}></div>

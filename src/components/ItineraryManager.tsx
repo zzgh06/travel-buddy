@@ -95,33 +95,58 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
   };
 
   return (
-    <div className='bg-white mt-3 p-6 rounded-lg border border-gray-300'>
+    <div data-cy="itinerary-manager" className='bg-white mt-3 p-6 rounded-lg border border-gray-300'>
       <h2 className='text-2xl font-bold mb-4'>일정 관리</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
         <div className='grid grid-cols-2 gap-4 mb-4'>
-          <div>
+          <div data-cy="itinerary-manager-date">
             <label className="block text-sm font-medium text-gray-700 mb-1">날짜</label>
-            <input {...register('date')} type="date" required className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
+            <input {...register('date')}
+              data-cy="itinerary-date-input"
+              type="date"
+              required
+              className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+            />
           </div>
-          <div>
+          <div data-cy="itinerary-manager-time">
             <label className="block text-sm font-medium text-gray-700 mb-1">시간</label>
-            <input {...register('time')} type="time" required className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
+            <input {...register('time')}
+              data-cy="itinerary-time-input"
+              type="time"
+              required
+              className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
           </div>
-          <div>
+          <div data-cy="itinerary-manager-activity">
             <label className="block text-sm font-medium text-gray-700 mb-1">활동</label>
-            <input {...register('activity')} placeholder='활동' required className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
+            <input {...register('activity')}
+              date-cy="itinerary-activity-input"
+              placeholder='활동'
+              required
+              className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
           </div>
-          <div>
+          <div data-cy="itinerary-manager-location">
             <label className="block text-sm font-medium text-gray-700 mb-1">장소</label>
-            <input {...register('location')} placeholder='장소' required className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
+            <input {...register('location')}
+              date-cy="itinerary-location-input"
+              placeholder='장소'
+              required
+              className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
           </div>
-          <div>
+          <div data-cy="itinerary-manager-expense">
             <label className="block text-sm font-medium text-gray-700 mb-1">지출 금액</label>
-            <input {...register('expense')} type="number" step="10000" placeholder='지출 금액' className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
+            <input {...register('expense')}
+              date-cy="itinerary-expense-input"
+              type="number"
+              step="10000"
+              placeholder='지출 금액'
+              className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
           </div>
-          <div>
+          <div data-cy="itinerary-manager-category">
             <label className="block text-sm font-medium text-gray-700 mb-1">카테고리 선택</label>
-            <select {...register('category')} required className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent'>
+            <select {...register('category')}
+              date-cy="itinerary-category-input"
+              required
+              className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent'>
               <option value="">카테고리 선택</option>
               <option value="accommodation">숙박</option>
               <option value="food">식비</option>
@@ -130,13 +155,20 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
               <option value="other">기타</option>
             </select>
           </div>
-          <div className='col-span-full'>
+          <div data-cy="itinerary-manager-notes" className='col-span-full'>
             <label className="block text-sm font-medium text-gray-700 mb-1">메모</label>
-            <textarea {...register('notes')} placeholder='메모' className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' rows={3} />
+            <textarea {...register('notes')}
+              data-cy="itinerary-notes-textarea"
+              placeholder='메모'
+              className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              rows={3} />
           </div>
         </div>
         <div className="flex space-x-2">
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          <button
+            data-cy={editingId ? 'edit-itinerary-manager-submit' : 'add-itinerary-manager-submit'}
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
             {editingId ? '일정 수정' : '일정 추가'}
           </button>
           {editingId && (
@@ -147,23 +179,24 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
         </div>
       </form>
 
-      <div className="space-y-4">
+      <div date-cy="itinerary-list" className="space-y-4">
         {itineraries?.map((itinerary) => (
-          <div key={itinerary._id} className='p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-300 ease-in-out'>
+          <div date-cy="itinerary-item" key={itinerary._id} className='p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-300 ease-in-out'>
             <div className='flex justify-between items-start mb-2'>
               <div>
-                <h3 className="text-lg font-semibold pb-2 text-gray-800">일정 : {itinerary.activity}</h3>
-                <p className="text-sm text-gray-600">장소: {itinerary.location}</p>
+                <h3 data-cy="itinerary-activity" className="text-lg font-semibold pb-2 text-gray-800">{itinerary.activity}</h3>
+                <p data-cy="itinerary-location" className="text-sm text-gray-600">장소: {itinerary.location}</p>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-800">날짜 : {new Date(itinerary.date).toLocaleDateString()}</p>
-                <p className="text-sm text-gray-600">시간 : {itinerary.time}</p>
+                <p data-cy="itinerary-date" className="text-sm font-medium text-gray-800">날짜 : {new Date(itinerary.date).toLocaleDateString()}</p>
+                <p data-cy="itinerary-time" className="text-sm text-gray-600">시간 : {itinerary.time}</p>
               </div>
             </div>
-            <p className="text-lg font-bold text-blue-600 mb-2">비용 : {itinerary.expense.toLocaleString()} 원</p>
-            {itinerary.notes && <p className="text-sm text-gray-700 mb-3">메모 : {itinerary.notes}</p>}
+            <p data-cy="itinerary-expense" className="text-lg font-bold text-blue-600 mb-2">비용 : {itinerary.expense.toLocaleString()} 원</p>
+            {itinerary.notes && <p data-cy="itinerary-notes" className="text-sm text-gray-700 mb-3">메모 : {itinerary.notes}</p>}
             <div className='flex justify-end space-x-2'>
               <button
+                data-cy="edit-itinerary-item-button"
                 onClick={() => handleEdit(itinerary)}
                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-black  hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition ease-in-out duration-150"
               >
@@ -171,6 +204,7 @@ export default function ItineraryManager({ travelPlanId }: ItineraryManagerProps
                 수정
               </button>
               <button
+                data-cy="delete-itinerary-item-button"
                 onClick={() => handleDelete(itinerary._id)}
                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150"
               >

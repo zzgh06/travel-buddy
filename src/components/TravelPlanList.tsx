@@ -29,7 +29,7 @@ export default function TravelPlanList({ initialPlans }: { initialPlans: TravelP
   return (
     <div className='max-w-[900px] mx-auto mt-4 p-4'>
       <SearchBar onSearch={handleSearch} />
-      <div className="mt-8 space-y-6">
+      <div data-cy="trip-list" className="mt-8 space-y-6">
         {plans.length === 0 ? (
           <div className='w-full shadow rounded-lg border border-gray-200'>
             <div className="text-center py-12">
@@ -39,6 +39,7 @@ export default function TravelPlanList({ initialPlans }: { initialPlans: TravelP
                 <Link
                   href="/planner/create"
                   className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  data-cy="create-new-trip-button"
                 >
                   <PlusCircleIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
                   새 여행 계획 만들기
@@ -53,16 +54,16 @@ export default function TravelPlanList({ initialPlans }: { initialPlans: TravelP
           </div>
         ) : (
           (isSearching ? filteredPlans : plans).map((plan) => (
-            <div key={plan._id} className='bg-white p-6 rounded-lg border border-gray-300 hover:shadow-lg transition duration-300 ease-in-out'>
+            <div data-cy="trip-item" key={plan._id} className='bg-white p-6 rounded-lg border border-gray-300 hover:shadow-lg transition duration-300 ease-in-out'>
               <div className='flex justify-between items-center mb-4'>
-                <h2 className='text-2xl font-semibold text-gray-800'>{plan.title}</h2>
+                <h2 data-cy="trip-title" className='text-2xl font-semibold text-gray-800'>{plan.title}</h2>
                 <span className='px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full'>
                   {new Date(plan.startDate) > new Date() ? "예정된 여행" : "지난 여행"}
                 </span>
               </div>
               <div className='flex items-center text-gray-600 mb-2'>
                 <MapIcon className='w-5 h-5 mr-2' />
-                <span>{plan.destination}</span>
+                <span data-cy="trip-destination">{plan.destination}</span>
               </div>
               <div className='flex items-center text-gray-600 mb-4'>
                 <CalendarDateRangeIcon className='w-5 h-5 mr-2' />
@@ -71,6 +72,7 @@ export default function TravelPlanList({ initialPlans }: { initialPlans: TravelP
               <Link
                 href={`/planner/${plan._id}`}
                 className="inline-flex items-center text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out"
+                data-cy="view-trip-details"
               >
                 <ArrowRightCircleIcon className="w-5 h-5 mr-2" />
                 자세히 보기

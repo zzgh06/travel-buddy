@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import TravelPlanDetail from './TravelPlanDetail';
 import BudgetTracker from './BudgetTracker';
 import ItineraryManager from './ItineraryManager';
@@ -8,7 +8,6 @@ import BudgetAnalysis from './BudgetAnalysis';
 import { useTravelPlan, useItineraries } from '@/hooks/useTravelPlanQueries';
 import { useTravelStore } from '@/store/useTravelStore';
 import FloatingToggleManager from './FloatingToggleManager';
-import TravelPlanDetailSkeleton from './skeleton/TravelPlanDetailSkeleton';
 
 interface ClientWrapperProps {
   travelPlanId: string;
@@ -26,18 +25,16 @@ export default function ClientWrapper({ travelPlanId }: ClientWrapperProps) {
   }, [travelPlan, itineraries, updateExpenses]);
 
   if (isLoadingTravelPlan || isLoadingItineraries) {
-    return <div>Loading...</div>;
+    return <div data-cy="loading-indicator">Loading...</div>;
   }
 
   if (!travelPlan || !itineraries) {
-    return <div>데이터를 불러오는 데 실패했습니다.</div>;
+    return <div data-cy="error-message">데이터를 불러오는 데 실패했습니다.</div>;
   }
 
   return (
-    <div className="max-w-4xl mx-auto mt-4 p-4 relative">
-      <Suspense fallback={<TravelPlanDetailSkeleton />}>
-        <TravelPlanDetail travelPlanId={travelPlanId} />
-      </Suspense>
+    <div className="max-w-4xl mx-auto mt-4 p-4 relative" data-cy="client-wrapper">
+      <TravelPlanDetail travelPlanId={travelPlanId} />
       <BudgetTracker travelPlanId={travelPlanId} />
       <BudgetAnalysis travelPlanId={travelPlanId} />
       <ItineraryManager travelPlanId={travelPlanId} />

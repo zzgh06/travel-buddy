@@ -13,9 +13,12 @@
 // -- This is a parent command --
 Cypress.Commands.add('login', (email: string, password: string) => {
   cy.visit('/login')
-  cy.get('[data-cy=email-input]').type(email)
-  cy.get('[data-cy=password-input]').type(password)
-  cy.get('[data-cy=login-button]').click()
+  cy.get('[data-cy=email]').type(email)
+  cy.get('[data-cy=password]').type(password)
+  cy.get('[data-cy=login-submit-button]').click()
+  
+  // URL 변경 대기
+  cy.url().should('not.include', '/login')
 })
 
 //

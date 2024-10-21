@@ -1,4 +1,9 @@
-import PlaceRecommendations from '../../components/PlaceRecommendations';
+'use client'
+import dynamic from 'next/dynamic'
+
+const PlaceRecommendations = dynamic(() => import('../../components/PlaceRecommendations'), {
+ssr: false
+})
 
 export default function RecommendationsPage() {
   return (

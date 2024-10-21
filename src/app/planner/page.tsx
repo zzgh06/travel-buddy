@@ -27,7 +27,7 @@ export default async function PlannerPage(){
   const travelPlans = await getTravelPlans(session.user?.email || "");
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 px-6">
+    <div className="max-w-4xl mx-auto mt-8 px-6" data-cy="planner-page">
       <div className="flex justify-between items-center px-3">
         <div className="flex flex-col">
         <h1 className="text-2xl font-bold pb-2">✈️ 나의 여행 계획</h1>

@@ -18,10 +18,10 @@ export default function BudgetTracker({ travelPlanId }: BudgetTrackerProps) {
   const isOverBudget = remainingBudget < 0;
   
   return (
-    <div className="bg-white rounded border border-gray-300 px-8 py-6 mb-3">
+    <div data-cy="budget-tracker" className="bg-white rounded border border-gray-300 px-8 py-6 mb-3">
       <h2 className="text-2xl font-bold mb-4">예산 추적</h2>
       <div className="mb-4 grid grid-cols-2 gap-4">
-        <div>
+        <div data-cy="total-budget">
           <p className="text-gray-600">총 예산</p>
           <p className="text-2xl font-bold">{travelPlan.budget.toLocaleString()} 원</p>
         </div>
@@ -29,7 +29,7 @@ export default function BudgetTracker({ travelPlanId }: BudgetTrackerProps) {
           <p className="text-gray-600">총 지출</p>
           <p className="text-2xl font-bold">{totalExpenses.toLocaleString()} 원</p>
         </div>
-        <div className="col-span-2">
+        <div data-cy="remaining-budget" className="col-span-2">
           <p className="text-gray-600">남은 예산</p>
           <p className={`text-2xl font-bold ${isOverBudget ? 'text-red-600' : 'text-green-600'}`}>
             {remainingBudget.toLocaleString()} 원
