@@ -8,7 +8,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="kr" className="max-w-[800px] min-h-[100vh] px-5 mx-auto">
+    <html lang="kr" className="max-w-[800px] min-h-[100vh] mx-auto">
       <body>
         <div className="min-h-[100vh] bg-white shadow-sm">
           <Provider>
