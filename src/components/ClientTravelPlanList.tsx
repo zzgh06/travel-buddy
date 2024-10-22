@@ -1,20 +1,29 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { TravelPlan } from '@/types/types';
 import SearchBar from './Searchbar';
-import { ArrowRightCircleIcon, CalendarDateRangeIcon, MapIcon, PlusCircleIcon } from '@heroicons/react/16/solid';
+import { 
+  ArrowRightCircleIcon, 
+  CalendarDateRangeIcon, 
+  MapIcon, 
+  PlusCircleIcon 
+} from '@heroicons/react/16/solid';
 
-
-export default function TravelPlanList({ initialPlans }: { initialPlans: TravelPlan[] }) {
+const newLocal = 'max-w-[900px] mx-auto mt-4 p-4';
+export default function ClientTravelPlanList({ 
+  initialPlans 
+}: { 
+  initialPlans: TravelPlan[] 
+}) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [plans, setPlans] = useState(initialPlans);
   const [filteredPlans, setFilteredPlans] = useState(initialPlans);
   const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = (searchTerm: string) => {
-    setIsSearching(searchTerm.length > 0)
+    setIsSearching(searchTerm.length > 0);
     const filtered = plans.filter(plan =>
       plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       plan.destination.toLowerCase().includes(searchTerm.toLowerCase())
@@ -27,7 +36,7 @@ export default function TravelPlanList({ initialPlans }: { initialPlans: TravelP
   }, [plans]);
 
   return (
-    <div className='max-w-[900px] mx-auto mt-4 p-4'>
+    <div className={newLocal}>
       <SearchBar onSearch={handleSearch} />
       <div data-cy="trip-list" className="mt-8 space-y-6">
         {plans.length === 0 ? (
