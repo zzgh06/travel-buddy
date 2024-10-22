@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
     const existingUser  = await User.findOne({ email });
     if (existingUser) {
-      return NextResponse.json({ message: '이미 등록된 이메일입니다.' }, { status: 400 })
+      return NextResponse.json({ message: '이미 등록된 이메일입니다.' }, { status: 404 })
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
