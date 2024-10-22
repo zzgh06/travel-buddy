@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useTravelStore } from '@/store/useTravelStore';
-import { useTravelPlan } from '@/hooks/useTravelPlanQueries';
+import { useTravelPlan } from '@/hooks/useTravelPlan';
 
 interface BudgetTrackerProps {
   travelPlanId: string;
@@ -23,16 +23,16 @@ export default function BudgetTracker({ travelPlanId }: BudgetTrackerProps) {
       <div className="mb-4 grid grid-cols-2 gap-4">
         <div data-cy="total-budget">
           <p className="text-gray-600">총 예산</p>
-          <p className="text-2xl font-bold">{travelPlan.budget.toLocaleString()} 원</p>
+          <p className="text-2xl font-bold">{travelPlan.budget ? travelPlan.budget.toLocaleString() : 0} 원</p>
         </div>
         <div>
           <p className="text-gray-600">총 지출</p>
-          <p className="text-2xl font-bold">{totalExpenses.toLocaleString()} 원</p>
+          <p className="text-2xl font-bold">{totalExpenses ? totalExpenses.toLocaleString() : 0} 원</p>
         </div>
         <div data-cy="remaining-budget" className="col-span-2">
           <p className="text-gray-600">남은 예산</p>
           <p className={`text-2xl font-bold ${isOverBudget ? 'text-red-600' : 'text-green-600'}`}>
-            {remainingBudget.toLocaleString()} 원
+            {remainingBudget ? remainingBudget.toLocaleString() : 0} 원
           </p>
         </div>
       </div>

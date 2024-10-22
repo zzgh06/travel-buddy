@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useCreateTravelPlan } from '@/hooks/useTravelPlanQueries';
+import { useCreateTravelPlan } from '@/hooks/useTravelPlan';
 import { IChecklistItem } from '@/types/types';
 import { BanknotesIcon, CalendarIcon, MapPinIcon, PencilIcon } from '@heroicons/react/16/solid';
 import CreateTravelPlanSkeleton from '@/components/skeleton/CreateTravelPlanSkeleton';

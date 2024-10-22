@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useDeleteTravelPlan, useTravelPlan, useUpdateTravelPlan } from '@/hooks/useTravelPlanQueries';
+import { useDeleteTravelPlan, useTravelPlan, useUpdateTravelPlan } from '@/hooks/useTravelPlan';
 import { PencilIcon, TrashIcon } from '@heroicons/react/16/solid';
 
 interface TravelPlanDetailProps {

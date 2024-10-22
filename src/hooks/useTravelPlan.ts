@@ -2,8 +2,6 @@ import { ChecklistItem, Itinerary, TravelPlan } from '@/types/types';
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 
-
-// 여행 계획 목록 조회
 export const useTravelPlans = (): UseQueryResult<TravelPlan[], Error> => {
   return useQuery({
     queryKey: ['travelPlans'],
@@ -14,7 +12,6 @@ export const useTravelPlans = (): UseQueryResult<TravelPlan[], Error> => {
   });
 };
 
-// 특정 여행 계획 조회
 export const useTravelPlan = (id: string): UseQueryResult<TravelPlan, Error> => {
   return useQuery({
     queryKey: ['travelPlan', id],
@@ -25,7 +22,6 @@ export const useTravelPlan = (id: string): UseQueryResult<TravelPlan, Error> => 
   });
 };
 
-// 여행 계획 생성
 export const useCreateTravelPlan = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -36,7 +32,6 @@ export const useCreateTravelPlan = () => {
   });
 };
 
-// 여행 계획 수정
 export const useUpdateTravelPlan = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -48,7 +43,6 @@ export const useUpdateTravelPlan = () => {
   });
 };
 
-// 여행 계획 삭제
 export const useDeleteTravelPlan = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -59,7 +53,6 @@ export const useDeleteTravelPlan = () => {
   });
 };
 
-// 일정 목록 조회
 export const useItineraries = (travelPlanId: string): UseQueryResult<Itinerary[], Error> => {
   return useQuery({
     queryKey: ['itineraries', travelPlanId],
@@ -70,7 +63,6 @@ export const useItineraries = (travelPlanId: string): UseQueryResult<Itinerary[]
   });
 };
 
-// 일정 생성
 export const useCreateItinerary = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -81,7 +73,6 @@ export const useCreateItinerary = () => {
   });
 };
 
-// 일정 수정
 export const useUpdateItinerary = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -92,7 +83,6 @@ export const useUpdateItinerary = () => {
   });
 };
 
-// 일정 삭제
 export const useDeleteItinerary = () => {
   const queryClient = useQueryClient();
   return useMutation({

@@ -4,6 +4,11 @@ export interface IChecklistItem {
   isCompleted: boolean;
 }
 
+export interface RouteMap {
+  locations: Location[];
+  routeOrder: number[];
+}
+
 export interface TravelPlan {
   _id: string;
   title: string;
@@ -12,6 +17,7 @@ export interface TravelPlan {
   destination: string;
   description?: string;
   budget: number;
+  routeMap?: RouteMap;
   checklist: IChecklistItem[];
 }
 
