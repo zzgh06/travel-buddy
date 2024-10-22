@@ -4,23 +4,33 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { TravelPlan } from '@/types/types';
 import SearchBar from './Searchbar';
-import { 
-  ArrowRightCircleIcon, 
-  CalendarDateRangeIcon, 
-  MapIcon, 
-  PlusCircleIcon 
+import {
+  ArrowRightCircleIcon,
+  CalendarDateRangeIcon,
+  MapIcon,
+  PlusCircleIcon
 } from '@heroicons/react/16/solid';
 
 const newLocal = 'max-w-[900px] mx-auto mt-4 p-4';
-export default function ClientTravelPlanList({ 
-  initialPlans 
-}: { 
-  initialPlans: TravelPlan[] 
+export default function ClientTravelPlanList({
+  initialPlans
+}: {
+  initialPlans: TravelPlan[]
 }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [plans, setPlans] = useState(initialPlans);
   const [filteredPlans, setFilteredPlans] = useState(initialPlans);
   const [isSearching, setIsSearching] = useState(false);
+
+  const getTravelStatus = (startDate: string, endDate: string) => {
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (now < start) return { text: "예정된 여행" };
+    if (now > end) return { text: "지난 여행" };
+    return { text: "진행 중인 여행" };
+  };
 
   const handleSearch = (searchTerm: string) => {
     setIsSearching(searchTerm.length > 0);
@@ -62,32 +72,35 @@ export default function ClientTravelPlanList({
             <span className='text-sm'>다른 검색어를 입력해주세요</span>
           </div>
         ) : (
-          (isSearching ? filteredPlans : plans).map((plan) => (
-            <div data-cy="trip-item" key={plan._id} className='bg-white p-6 rounded-lg border border-gray-300 hover:shadow-lg transition duration-300 ease-in-out'>
-              <div className='flex justify-between items-center mb-4'>
-                <h2 data-cy="trip-title" className='text-2xl font-semibold text-gray-800'>{plan.title}</h2>
-                <span className='px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full'>
-                  {new Date(plan.startDate) > new Date() ? "예정된 여행" : "지난 여행"}
-                </span>
+          (isSearching ? filteredPlans : plans).map((plan) => {
+            const status = getTravelStatus(plan.startDate, plan.endDate);
+            return (
+              <div data-cy="trip-item" key={plan._id} className='bg-white p-6 rounded-lg border border-gray-300 hover:shadow-lg transition duration-300 ease-in-out'>
+                <div className='flex justify-between items-center mb-4'>
+                  <h2 data-cy="trip-title" className='text-2xl font-semibold text-gray-800'>{plan.title}</h2>
+                  <span className={`px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full`}>
+                    {status.text}
+                  </span>
+                </div>
+                <div className='flex items-center text-gray-600 mb-2'>
+                  <MapIcon className='w-5 h-5 mr-2' />
+                  <span data-cy="trip-destination">{plan.destination}</span>
+                </div>
+                <div className='flex items-center text-gray-600 mb-4'>
+                  <CalendarDateRangeIcon className='w-5 h-5 mr-2' />
+                  <span>{new Date(plan.startDate).toLocaleDateString()} - {new Date(plan.endDate).toLocaleDateString()}</span>
+                </div>
+                <Link
+                  href={`/planner/${plan._id}`}
+                  className="inline-flex items-center text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out"
+                  data-cy="view-trip-details"
+                >
+                  <ArrowRightCircleIcon className="w-5 h-5 mr-2" />
+                  자세히 보기
+                </Link>
               </div>
-              <div className='flex items-center text-gray-600 mb-2'>
-                <MapIcon className='w-5 h-5 mr-2' />
-                <span data-cy="trip-destination">{plan.destination}</span>
-              </div>
-              <div className='flex items-center text-gray-600 mb-4'>
-                <CalendarDateRangeIcon className='w-5 h-5 mr-2' />
-                <span>{new Date(plan.startDate).toLocaleDateString()} - {new Date(plan.endDate).toLocaleDateString()}</span>
-              </div>
-              <Link
-                href={`/planner/${plan._id}`}
-                className="inline-flex items-center text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out"
-                data-cy="view-trip-details"
-              >
-                <ArrowRightCircleIcon className="w-5 h-5 mr-2" />
-                자세히 보기
-              </Link>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

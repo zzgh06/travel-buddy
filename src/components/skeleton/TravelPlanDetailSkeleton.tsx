@@ -66,7 +66,7 @@ export default function TravelPlanDetailSkeleton() {
             <div className="h-10 w-10 bg-gray-200 rounded animate-pulse" />
           </div>
         </div>
-        <div className="h-[400px] w-full bg-gray-200 animate-pulse" />
+        <div className="h-[400px] w-full bg-gray-200" />
       </div>
 
       <div className="bg-white mt-3 p-6 rounded-lg border border-gray-300">

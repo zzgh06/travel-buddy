@@ -14,8 +14,8 @@ interface ClientWrapperProps {
 }
 
 export default function ClientWrapper({ travelPlanId }: ClientWrapperProps) {
-  const { data: travelPlan, isLoading: isLoadingTravelPlan } = useTravelPlan(travelPlanId);
-  const { data: itineraries, isLoading: isLoadingItineraries } = useItineraries(travelPlanId);
+  const { isLoading: isLoadingTravelPlan } = useTravelPlan(travelPlanId);
+  const { isLoading: isLoadingItineraries } = useItineraries(travelPlanId);
 
   const isLoading = isLoadingTravelPlan || isLoadingItineraries;
 
@@ -23,12 +23,8 @@ export default function ClientWrapper({ travelPlanId }: ClientWrapperProps) {
     return <TravelPlanDetailSkeleton />;
   }
 
-  if (!travelPlan || !itineraries) {
-    return <div>데이터를 불러오는 데 실패했습니다.</div>;
-  }
-
   return (
-    <div className="max-w-4xl mx-auto mt-4 p-4 relative" data-cy="client-wrapper">
+    <div className="max-w-4xl mx-auto mt-1 p-4 relative" data-cy="client-wrapper">
       <TravelPlanDetail travelPlanId={travelPlanId} />
       <BudgetTracker travelPlanId={travelPlanId} />
       <BudgetAnalysis travelPlanId={travelPlanId} />

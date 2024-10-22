@@ -14,7 +14,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   await dbConnect();
 
   try {
-    const travelPlan = await TravelPlan.findOne({ _id: params.id, userEmail: session.user?.email });
+    const travelPlan = await TravelPlan.findById(params.id);
     if (!travelPlan) {
       return NextResponse.json({ error: '해당 여행 계획을 찾을 수 없습니다.' }, { status: 404 });
     }
@@ -24,13 +24,13 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const totalExpenses = itineraries.reduce((sum, itinerary) => sum + (itinerary.expense || 0), 0);
     const remainingBudget = travelPlan.budget - totalExpenses;
 
-    return NextResponse.json({ 
-      success: true, 
-      data: { 
+    return NextResponse.json({
+      success: true,
+      data: {
         travelPlan: JSON.parse(JSON.stringify(travelPlan)),
         itineraries: JSON.parse(JSON.stringify(itineraries)),
         totalExpenses,
-        remainingBudget
+        remainingBudget,
       }
     }, { status: 200 });
   } catch (error) {
@@ -52,7 +52,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const body = await req.json();
     const updatedPlan = await TravelPlan.findOneAndUpdate(
       { _id: params.id, userEmail: session.user?.email },
-      { $set: body },  
+      { $set: body },
       { new: true, runValidators: true }
     );
 
@@ -61,7 +61,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     return NextResponse.json({ success: true, data: updatedPlan }, { status: 200 });
-  } catch (error : any) {
+  } catch (error: any) {
     console.error(error);
     return NextResponse.json({ success: false, error: '여행 계획 수정에 실패했습니다.' }, { status: 500 });
   }
@@ -77,14 +77,14 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   await dbConnect();
 
   try {
-    const deletedPlan = await TravelPlan.findOneAndDelete({ _id: params.id, userEmail: session.user?.email || ""});
+    const deletedPlan = await TravelPlan.findOneAndDelete({ _id: params.id, userEmail: session.user?.email || "" });
 
     if (!deletedPlan) {
       return NextResponse.json({ error: '여행 계획을 찾을 수 없습니다.' }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, data: deletedPlan }, { status: 200 });
-  } catch (error : any) {
+  } catch (error: any) {
     console.error(error);
     return NextResponse.json({ success: false, error: '여행 계획 삭제에 실패했습니다.' }, { status: 500 });
   }

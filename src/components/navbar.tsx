@@ -38,7 +38,7 @@ const Navbar = () => {
     <nav className={`fixed left-1/2 -translate-x-1/2 w-full max-w-[800px] transition-all duration-300 z-50
       ${scrolled
         ? 'bg-gray-50 shadow-lg'
-        : 'bg-white'
+        : 'bg-white shadow-sm'
       }`}>
       <div className="h-[60px] flex items-center justify-between px-5">
         <div className="flex items-center">
@@ -89,7 +89,7 @@ const Navbar = () => {
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-1 bg-white/80 backdrop-blur-md ring-1 ring-black ring-opacity-5 focus:outline-none transform transition-all duration-200">
                   <button
                     onClick={handleSignOut}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 transition-colors duration-200"
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     data-cy="logout-button"
                   >

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDeleteTravelPlan, useTravelPlan, useUpdateTravelPlan } from '@/hooks/useTravelPlan';
 import { PencilIcon, TrashIcon } from '@heroicons/react/16/solid';
+import ShareButton from './ShareButton';
 
 interface TravelPlanDetailProps {
   travelPlanId: string;
@@ -66,7 +67,7 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
   }
 
   return (
-    <div data-cy="travel-plan-detail" className="max-w-4xl mx-auto my-3 p-6 bg-white rounded-lg border border-gray-300">
+    <div data-cy="travel-plan-detail" className="max-w-4xl mx-auto mb-3 p-6 bg-white rounded-lg border border-gray-300">
       <h1 data-cy="travel-plan-title" className="text-3xl font-bold mb-8 text-gray-800 border-b pb-4">
         {isEditing ? (
           <input
@@ -153,12 +154,13 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
                 rows={4}
               />
             ) : (
-              <p  data-cy="travel-plan-description" className="text-lg text-gray-800">{travelPlan?.description}</p>
+              <p data-cy="travel-plan-description" className="text-lg text-gray-800">{travelPlan?.description}</p>
             )}
           </div>
         </div>
       </div>
       <div className="flex justify-end space-x-4">
+        {!isEditing && <ShareButton travelPlanId={travelPlanId} />}
         <button
           data-cy={isEditing ? 'plan-detail-edit-button' : 'plan-detail-button'}
           onClick={handleEdit}
