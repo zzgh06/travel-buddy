@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from "react";
-import { useChecklistItems, useCreateChecklistItem, useDeleteChecklistItem, useUpdateChecklistItem } from "@/hooks/useTravelPlanQueries";
+import { useChecklistItems, useCreateChecklistItem, useDeleteChecklistItem, useUpdateChecklistItem } from "@/hooks/useTravelPlan";
 import { ChecklistItem } from "@/types/types";
 import { FaTrash } from "react-icons/fa";
 

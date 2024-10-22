@@ -17,10 +17,8 @@ interface TravelState {
   routeOrder: number[];
   setBudgetAlertThreshold: (threshold: number) => void;
   updateExpenses: (itineraries: Itinerary[], budget: number) => void;
-  addLocation: (location: Location) => void;
-  updateLocation: (id: number, updates: Partial<Location>) => void;
-  removeLocation: (id: number) => void;
-  setRouteOrder: (order: number[]) => void;
+  initializeRouteMap: (locations: Location[], routeOrder: number[]) => void;
+  updateLocalRouteMap: (locations: Location[], routeOrder: number[]) => void;
 }
 
 type TravelPersist = (
@@ -61,20 +59,12 @@ export const useTravelStore = create<TravelState>()(
 
         set({ categoryExpenses, totalExpenses, remainingBudget });
       },
-      addLocation: (location) => set((state) => ({
-        locations: [...state.locations, location],
-        routeOrder: [...state.routeOrder, location.id]
-      })),
-      updateLocation: (id, updates) => set((state) => ({
-        locations: state.locations.map((loc) => 
-          loc.id === id ? { ...loc, ...updates } : loc
-        )
-      })),
-      removeLocation: (id) => set((state) => ({
-        locations: state.locations.filter(loc => loc.id !== id),
-        routeOrder: state.routeOrder.filter(orderId => orderId !== id)
-      })),
-      setRouteOrder: (order) => set({ routeOrder: order }),
+      initializeRouteMap: (locations, routeOrder) => {
+        set({ locations, routeOrder });
+      },
+      updateLocalRouteMap: (locations, routeOrder) => {
+        set({ locations, routeOrder });
+      },
     }),
     {
       name: 'travel-storage',

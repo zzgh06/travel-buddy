@@ -1,6 +1,6 @@
 "use client";
 
-import { useSignUp } from "@/hooks/useSignUpQueries";
+import { useSignUp } from "@/hooks/useSignUp";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";

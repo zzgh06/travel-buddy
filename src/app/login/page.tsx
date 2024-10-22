@@ -54,7 +54,7 @@ export default function Login() {
             Welcome Back
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            로그인하여 여행 계획을 만들어 보세요
+            로그인하여 나만의 여행 계획을 만들어 보세요
           </p>
         </div>
         <form data-cy="login-form" onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">

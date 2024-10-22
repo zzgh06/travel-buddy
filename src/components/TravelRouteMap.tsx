@@ -1,37 +1,94 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTravelStore } from '@/store/useTravelStore';
 import { Location } from '@/types/types';
+import SearchSidebar from './SearchSidebar';
+import { BiSearch } from 'react-icons/bi';
+import { useTravelPlan } from '@/hooks/useTravelPlan';
+import { useAddLocation, useRemoveLocation, useUpdateLocation } from '@/hooks/useRouteMap';
 
-export default function TravelRouteMap() {
-  const {
-    locations,
-    routeOrder,
-    addLocation,
-    updateLocation,
-    removeLocation
-  } = useTravelStore();
+interface TravelRouteMapProps {
+  travelPlanId: string;
+}
 
+export default function TravelRouteMap({ travelPlanId }: TravelRouteMapProps) {
+  const { data: travelPlan } = useTravelPlan(travelPlanId);
+  const addLocationMutation = useAddLocation();
+  const removeLocationMutation = useRemoveLocation();
+  const updateLocationMutation = useUpdateLocation();
+
+  const { updateLocalRouteMap } = useTravelStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<google.maps.places.AutocompletePrediction[]>([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const locations = travelPlan?.routeMap?.locations || [];
+  const routeOrder = travelPlan?.routeMap?.routeOrder || [];
+
   const mapRef = useRef<L.Map | null>(null);
   const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
   const placesService = useRef<google.maps.places.PlacesService | null>(null);
+  const scriptRef = useRef<HTMLScriptElement | null>(null);
+
 
   useEffect(() => {
+    if (locations.length > 0 && travelPlanId) {
+      const saveLocations = async () => {
+        try {
+          await fetch(`/api/travel-plans/${travelPlanId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              routeMap: {
+                locations,
+                routeOrder
+              }
+            })
+          });
+        } catch (error) {
+          console.error('Failed to save locations:', error);
+        }
+      };
+      saveLocations();
+    }
+  }, [locations, routeOrder, travelPlanId]);
+
+  useEffect(() => {
+    if (window.google?.maps) {
+      autocompleteService.current = new google.maps.places.AutocompleteService();
+      placesService.current = new google.maps.places.PlacesService(document.createElement('div'));
+      return;
+    }
+
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    if (existingScript) {
+      existingScript.addEventListener('load', () => {
+        autocompleteService.current = new google.maps.places.AutocompleteService();
+        placesService.current = new google.maps.places.PlacesService(document.createElement('div'));
+      });
+      return;
+    }
+
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`;
     script.async = true;
-    script.onload = () => {
+    script.defer = true;
+
+    script.addEventListener('load', () => {
       autocompleteService.current = new google.maps.places.AutocompleteService();
       placesService.current = new google.maps.places.PlacesService(document.createElement('div'));
-    };
-    document.body.appendChild(script);
+    });
+
+    document.head.appendChild(script);
+    scriptRef.current = script;
 
     return () => {
-      document.body.removeChild(script);
+      if (scriptRef.current && scriptRef.current.parentNode === document.head) {
+        document.head.removeChild(scriptRef.current);
+      }
     };
   }, []);
 
@@ -54,6 +111,46 @@ export default function TravelRouteMap() {
     })
   }, [])
 
+  const handleAddLocation = async (location: Location) => {
+    try {
+      await addLocationMutation.mutateAsync({
+        travelPlanId,
+        location,
+        currentLocations: locations,
+        currentRouteOrder: routeOrder
+      });
+    } catch (error) {
+      console.error('Failed to add location:', error);
+    }
+  };
+
+  const handleRemoveLocation = async (locationId: number) => {
+    try {
+      await removeLocationMutation.mutateAsync({
+        travelPlanId,
+        locationId,
+        currentLocations: locations,
+        currentRouteOrder: routeOrder
+      });
+    } catch (error) {
+      console.error('Failed to remove location:', error);
+    }
+  };
+
+  const handleUpdateLocation = async (locationId: number, updates: Partial<Location>) => {
+    try {
+      await updateLocationMutation.mutateAsync({
+        travelPlanId,
+        locationId,
+        updates,
+        currentLocations: locations,
+        currentRouteOrder: routeOrder
+      });
+    } catch (error) {
+      console.error('Failed to update location:', error);
+    }
+  };
+
   const MapEvents = () => {
     useMapEvents({
       click(e) {
@@ -63,16 +160,16 @@ export default function TravelRouteMap() {
           position: [e.latlng.lat, e.latlng.lng],
           type: 'attraction',
         };
-        addLocation(newLocation);
+        handleAddLocation(newLocation);
       },
     });
     return null;
   };
 
   const handleSearch = () => {
-    if (!autocompleteService.current) return;
+    if (!autocompleteService.current || !searchQuery.trim()) return;
 
-    const request: google.maps.places.AutocompletionRequest = {
+    const request: google.maps.places.AutocompleteRequest = {
       input: searchQuery,
       types: ['establishment']
     };
@@ -80,6 +177,7 @@ export default function TravelRouteMap() {
     autocompleteService.current.getPlacePredictions(request, (predictions, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
         setSearchResults(predictions);
+        setIsSidebarOpen(true);
       }
     });
   };
@@ -100,46 +198,53 @@ export default function TravelRouteMap() {
           position: [place.geometry.location.lat(), place.geometry.location.lng()],
           type: 'attraction',
         };
-        addLocation(newLocation);
+        handleAddLocation(newLocation); 
         mapRef.current?.setView(newLocation.position, 13);
         setSearchResults([]);
         setSearchQuery('');
+        setIsSidebarOpen(false);
       }
     });
-  };
-
-  const handleMarkerDoubleClick = (id: number) => {
-    removeLocation(id);
   };
 
   const routePositions = useMemo(() => routeOrder.map(id =>
     locations.find(loc => loc.id === id)?.position
   ).filter((pos): pos is [number, number] => pos !== undefined), [locations, routeOrder]);
 
+  const initialCenter = useMemo(() => {
+    if (locations.length > 0) {
+      return locations[0].position;
+    }
+    return [37.5665, 126.9780] as [number, number];
+  }, [locations]);
+
   return (
-    <div>
-      <div>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder='장소 검색'
-        />
-        <button onClick={handleSearch}>검색</button>
+    <div className="relative">
+      <div className="my-3 p-4 z-20">
+        <div className='text-center mb-3'>
+          <h3 className='font-bold text-2xl mb-1'>원하는 장소를 검색해 보세요</h3>
+          <p className='text-lg text-gray-500 font-medium'>근처 추천 장소를 안내합니다.</p>
+        </div>
+        <div className="max-w-3xl mx-auto flex">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder='장소 검색'
+            className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <button
+            onClick={handleSearch}
+            className="p-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 transition duration-150 ease-in-out flex items-center justify-center"
+          >
+            <BiSearch size={20} />
+          </button>
+        </div>
       </div>
-      {searchResults.length > 0 && (
-        <ul>
-          {searchResults.map((result) => (
-            <li key={result.place_id} onClick={() => handleSelectPlace(result.place_id)}>
-              {result.description}
-            </li>
-          ))}
-        </ul>
-      )}
       <MapContainer
-        center={[37.5665, 126.9780]}
+        center={initialCenter}
         zoom={13}
-        style={{ height: '500px', width: '100%' }}
+        style={{ height: '400px', width: '100%', zIndex: '10' }}
         ref={mapRef}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -150,17 +255,19 @@ export default function TravelRouteMap() {
             position={location.position}
             icon={createNumberedIcon(index + 1)}
             eventHandlers={{
-              dblclick: () => handleMarkerDoubleClick(location.id)
+              dblclick: () => handleRemoveLocation(location.id)
             }}
           >
             <Popup>
               <input
                 value={location.name}
-                onChange={(e) => updateLocation(location.id, { name: e.target.value })}
+                onChange={(e) => handleUpdateLocation(location.id, { name: e.target.value })}
               />
               <select
                 value={location.type}
-                onChange={(e) => updateLocation(location.id, { type: e.target.value as 'attraction' | 'restaurant' | 'hotel' })}
+                onChange={(e) => handleUpdateLocation(location.id, { 
+                  type: e.target.value as 'attraction' | 'restaurant' | 'hotel' 
+                })}              
               >
                 <option value="attraction">관광지</option>
                 <option value="restaurant">음식점</option>
@@ -171,6 +278,12 @@ export default function TravelRouteMap() {
         ))}
         <Polyline positions={routePositions} color="blue" />
       </MapContainer>
+      <SearchSidebar
+        searchResults={searchResults}
+        onSelectPlace={handleSelectPlace}
+        onClose={() => setIsSidebarOpen(false)}
+        isOpen={isSidebarOpen}
+      />
     </div>
   );
 };

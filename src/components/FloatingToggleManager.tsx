@@ -26,7 +26,7 @@ export default function FloatingToggleManager({ travelPlanId }: FloatingToggleMa
   return (
     <div
       data-cy="floating-toggle-manager"
-      className={`fixed right-6 bottom-8 bg-white shadow-lg rounded-lg transition-all duration-300 ease-in-out
+      className={`fixed right-6 bottom-8 z-30 bg-white shadow-lg rounded-lg transition-all duration-300 ease-in-out
       ${
         isOpen 
           ? 'w-[340px] h-auto' 

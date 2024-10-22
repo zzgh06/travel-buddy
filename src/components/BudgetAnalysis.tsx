@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTravelStore } from '@/store/useTravelStore';
-import { useTravelPlan } from '@/hooks/useTravelPlanQueries';
+import { useTravelPlan } from '@/hooks/useTravelPlan';
 
 interface BudgetAnalysisProps {
   travelPlanId: string;

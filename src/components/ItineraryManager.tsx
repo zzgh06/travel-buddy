@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { Itinerary } from '@/types/types';
-import { useCreateItinerary, useDeleteItinerary, useItineraries, useUpdateItinerary } from '@/hooks/useTravelPlanQueries';
+import { useCreateItinerary, useDeleteItinerary, useItineraries, useUpdateItinerary } from '@/hooks/useTravelPlan';
 import { PencilIcon, TrashIcon } from '@heroicons/react/16/solid';
 
 

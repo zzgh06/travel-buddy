@@ -51,8 +51,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   try {
     const body = await req.json();
     const updatedPlan = await TravelPlan.findOneAndUpdate(
-      { _id: params.id, userEmail: session.user?.email},
-      body,
+      { _id: params.id, userEmail: session.user?.email },
+      { $set: body },  
       { new: true, runValidators: true }
     );
 

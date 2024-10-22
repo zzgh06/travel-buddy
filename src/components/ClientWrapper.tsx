@@ -5,7 +5,7 @@ import TravelPlanDetail from './TravelPlanDetail';
 import BudgetTracker from './BudgetTracker';
 import ItineraryManager from './ItineraryManager';
 import BudgetAnalysis from './BudgetAnalysis';
-import { useTravelPlan, useItineraries } from '@/hooks/useTravelPlanQueries';
+import { useTravelPlan, useItineraries } from '@/hooks/useTravelPlan';
 import { useTravelStore } from '@/store/useTravelStore';
 import FloatingToggleManager from './FloatingToggleManager';
 import TravelRouteMap from './TravelRouteMap';
@@ -38,7 +38,7 @@ export default function ClientWrapper({ travelPlanId }: ClientWrapperProps) {
       <TravelPlanDetail travelPlanId={travelPlanId} />
       <BudgetTracker travelPlanId={travelPlanId} />
       <BudgetAnalysis travelPlanId={travelPlanId} />
-      <TravelRouteMap />
+      <TravelRouteMap travelPlanId={travelPlanId} />
       <ItineraryManager travelPlanId={travelPlanId} />
       <FloatingToggleManager travelPlanId={travelPlanId} />
     </div>
