@@ -1,6 +1,5 @@
 # 당신의 여행 플래너 - Travel Buddy
-![스크린샷 2024-10-12 030526](https://github.com/user-attachments/assets/74536df6-79a0-4c46-af97-070fddad9a8e)
-
+![travel-buddy-blue-two vercel app____vercel_draft=1](https://github.com/user-attachments/assets/48f0ad85-ed11-4e32-a488-e39bfb4e8526)
 **Travel Buddy는 여행 일정을 한눈에 관리하고 공유하여 편안한 여행을 도울 수 있는 웹 애플리케이션 입니다.**
 <br>
 
@@ -63,9 +62,9 @@
 
 |메인 페이지|로그인 페이지|
 |:------:|:------:|
-|![whats-in-yours-fridge netlify app_ (8)](https://github.com/user-attachments/assets/37007615-07fc-410e-836c-7611e59a4db0)|![whats-in-yours-fridge netlify app_ (14)](https://github.com/user-attachments/assets/d4d163ab-0ee3-41fc-9af4-360fbc8b2538)|
+|![travel-buddy-blue-two vercel app____vercel_draft=1](https://github.com/user-attachments/assets/48f0ad85-ed11-4e32-a488-e39bfb4e8526)|![travel-buddy-blue-two vercel app_](https://github.com/user-attachments/assets/cce7f9dc-a2ba-4aa0-86a9-7dc4e982af4a)|
 
 |플래너 페이지|플래너 상세 페이지|
 |:------:|:------:|
-|![whats-in-yours-fridge netlify app_store](https://github.com/user-attachments/assets/66ba4893-6fee-40fc-b13c-84ba7e06ef75)|![whats-in-yours-fridge netlify app_store (1)](https://github.com/user-attachments/assets/24204e3e-d760-461c-8417-5132645e37e9)|
+|![travel-buddy-blue-two vercel app_login](https://github.com/user-attachments/assets/c63340eb-8abd-4f6b-b952-29040a5e500f)|![travel-buddy-blue-two vercel app_login (1)](https://github.com/user-attachments/assets/9c333af1-3e06-4ffd-aa71-368d847f0999)|
 <br>
