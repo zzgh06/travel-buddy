@@ -1,3 +1,4 @@
+import { useTravelStore } from '@/store/useTravelStore';
 import { ChecklistItem, Itinerary, TravelPlan } from '@/types/types';
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
@@ -13,10 +14,16 @@ export const useTravelPlans = (): UseQueryResult<TravelPlan[], Error> => {
 };
 
 export const useTravelPlan = (id: string): UseQueryResult<TravelPlan, Error> => {
+  const updateExpenses = useTravelStore(state => state.updateExpenses);
   return useQuery({
     queryKey: ['travelPlan', id],
     queryFn: async () => {
       const { data } = await axios.get(`/api/travel-plans/${id}`);
+      
+      if (data.data.itineraries) {
+        updateExpenses(data.data.itineraries, data.data.travelPlan.budget);
+      }
+      
       return data.data.travelPlan;
     }
   });
@@ -54,12 +61,21 @@ export const useDeleteTravelPlan = () => {
 };
 
 export const useItineraries = (travelPlanId: string): UseQueryResult<Itinerary[], Error> => {
+  const updateExpenses = useTravelStore(state => state.updateExpenses);
+  const { data: travelPlan } = useTravelPlan(travelPlanId);
+
   return useQuery({
     queryKey: ['itineraries', travelPlanId],
     queryFn: async () => {
       const { data } = await axios.get(`/api/itineraries?travelPlanId=${travelPlanId}`);
+      
+      if (data.data && travelPlan) {
+        updateExpenses(data.data, travelPlan.budget);
+      }
+      
       return data.data;
-    }
+    },
+    enabled: !!travelPlan
   });
 };
 
