@@ -10,29 +10,17 @@ describe('여행 계획 생성', () => {
   });
 
   it.only('여행 계획 작성 후에 여행계획 만들기 버튼 누르면 플래너 페이지로 이동', () => {
-    // 새 여행 계획 만들기 페이지로 이동
     cy.dataCy('planner-page-button').click();
-
-    // 여행 제목 입력
+    
     cy.dataCy('trip-title-input').type('도쿄 여행 2024');
-
-    // 여행 날짜 선택
     cy.dataCy('trip-start-date').type('2024-10-18');
     cy.dataCy('trip-end-date').type('2024-10-23');
-
-    // 여행 목적지 선택
     cy.dataCy('trip-destination-input').type('도쿄');
-
-    // 여행 예산 선택
     cy.dataCy('trip-budget-input').type('100000');
-
-    // 여행 설명 입력
     cy.dataCy('trip-description-input').type('관광');
 
-    // 여행 계획 만들기 버튼 클릭
     cy.dataCy('create-trip-button').click();
 
-    // 플래너 페이지로 이동 확인
     cy.url().should('include', '/planner');
   });
   

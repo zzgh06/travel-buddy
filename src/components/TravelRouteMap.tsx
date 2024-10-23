@@ -171,7 +171,7 @@ export default function TravelRouteMap({ travelPlanId }: TravelRouteMapProps) {
 
     const request: google.maps.places.AutocompleteRequest = {
       input: searchQuery,
-      types: ['establishment']
+      types: ['establishment', 'geocode']
     };
 
     autocompleteService.current.getPlacePredictions(request, (predictions, status) => {

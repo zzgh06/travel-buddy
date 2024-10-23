@@ -17,7 +17,6 @@ Cypress.Commands.add('login', (email: string, password: string) => {
   cy.get('[data-cy=password]').type(password)
   cy.get('[data-cy=login-submit-button]').click()
   
-  // URL 변경 대기
   cy.url().should('not.include', '/login')
 })
 

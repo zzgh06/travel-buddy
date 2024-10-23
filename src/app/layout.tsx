@@ -1,6 +1,25 @@
 import Provider from "@/components/Provider"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: '여행 플래너 - 당신의 완벽한 여행 파트너',
+  description: '전 세계 여행지 탐색부터 일정 관리까지, 당신의 꿈꾸던 여행을 계획하고 실현하세요.',
+  keywords: '여행 계획, 여행 일정, 여행지 추천, 여행 플래너, 해외여행',
+  openGraph: {
+    title: '여행 플래너 - 당신의 완벽한 여행 파트너',
+    description: '전 세계 여행지 탐색부터 일정 관리까지, 당신의 꿈꾸던 여행을 계획하고 실현하세요.',
+    images: [
+      {
+        url: '/Travel-buddy.png',
+        width: 1200,
+        height: 630,
+        alt: '여행 플래너 메인 이미지',
+      },
+    ],
+  },
+};
 
 export default function RootLayout({
   children,
