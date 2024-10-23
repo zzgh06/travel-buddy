@@ -16,6 +16,7 @@ export interface TravelPlan {
   endDate: string;
   destination: string;
   description?: string;
+  userEmail: string;
   budget: number;
   routeMap?: RouteMap;
   checklist: IChecklistItem[];

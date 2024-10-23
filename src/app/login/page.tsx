@@ -32,10 +32,10 @@ export default function Login() {
     });
 
     if (result?.error) {
-      alert(result.error);
+      alert('아이디 혹은 비밀번호를 확인해주세요.');
     } else {
       router.push("/");
-      router.refresh();
+      window.location.reload();
     }
   }
   const handleSignUp = () => {

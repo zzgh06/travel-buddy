@@ -6,11 +6,6 @@ import TravelPlan from "@/models/TravelPlan";
 import Itinerary from "@/models/Itinerary";
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: '인증되지 않은 사용자입니다.' }, { status: 401 });
-  }
-
   await dbConnect();
 
   try {
@@ -21,7 +16,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: '여행 계획 ID가 필요합니다.' }, { status: 400 });
     }
 
-    const travelPlan = await TravelPlan.findOne({ _id: travelPlanId, userEmail: session.user?.email });
+    const travelPlan = await TravelPlan.findOne({ _id: travelPlanId });
     if (!travelPlan) {
       return NextResponse.json({ error: '해당 여행 계획을 찾을 수 없습니다.' }, { status: 404 });
     }

@@ -6,11 +6,6 @@ import { authOptions } from '../../auth/[...nextauth]/auth';
 import Itinerary from '@/models/Itinerary';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: '인증되지 않은 사용자입니다.' }, { status: 401 });
-  }
-
   await dbConnect();
 
   try {
@@ -20,7 +15,6 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     const itineraries = await Itinerary.find({ travelPlanId: params.id }).sort({ date: 1, time: 1 });
-
     const totalExpenses = itineraries.reduce((sum, itinerary) => sum + (itinerary.expense || 0), 0);
     const remainingBudget = travelPlan.budget - totalExpenses;
 

@@ -6,7 +6,7 @@ import ItineraryManager from './ItineraryManager';
 import BudgetAnalysis from './BudgetAnalysis';
 import FloatingToggleManager from './FloatingToggleManager';
 import TravelRouteMap from './TravelRouteMap';
-import { useItineraries, useTravelPlan } from '@/hooks/useTravelPlan';
+import { useTravelPlan } from '@/hooks/useTravelPlan';
 import TravelPlanDetailSkeleton from './skeleton/TravelPlanDetailSkeleton';
 
 interface ClientWrapperProps {
@@ -14,22 +14,32 @@ interface ClientWrapperProps {
 }
 
 export default function ClientWrapper({ travelPlanId }: ClientWrapperProps) {
-  const { isLoading: isLoadingTravelPlan } = useTravelPlan(travelPlanId);
-  const { isLoading: isLoadingItineraries } = useItineraries(travelPlanId);
-
-  const isLoading = isLoadingTravelPlan || isLoadingItineraries;
+  const { data: travelPlan, isLoading } = useTravelPlan(travelPlanId);
 
   if (isLoading) {
     return <TravelPlanDetailSkeleton />;
   }
 
+  if (!travelPlan) {
+    return (
+      <div className="max-w-4xl mx-auto mt-8 p-4 text-center">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+          여행 계획을 찾을 수 없습니다
+        </h2>
+        <p className="text-gray-600">
+          요청하신 여행 계획이 존재하지 않거나 접근 권한이 없습니다.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto mt-1 p-4 relative" data-cy="client-wrapper">
-      <TravelPlanDetail travelPlanId={travelPlanId} />
+      <TravelPlanDetail travelPlanId={travelPlanId} travelPlan={travelPlan} />
       <BudgetTracker travelPlanId={travelPlanId} />
       <BudgetAnalysis travelPlanId={travelPlanId} />
       <TravelRouteMap travelPlanId={travelPlanId} />
-      <ItineraryManager travelPlanId={travelPlanId} />
+      <ItineraryManager travelPlanId={travelPlanId} travelPlan={travelPlan} />
       <FloatingToggleManager travelPlanId={travelPlanId} />
     </div>
   );
