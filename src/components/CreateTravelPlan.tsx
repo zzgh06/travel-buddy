@@ -14,6 +14,7 @@ type FormData = {
   startDate: string;
   endDate: string;
   destination: string;
+  userEmail: string;
   budget: number;
   checklist: IChecklistItem[];
   description: string;

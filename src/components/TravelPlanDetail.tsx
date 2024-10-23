@@ -2,28 +2,35 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useDeleteTravelPlan, useTravelPlan, useUpdateTravelPlan } from '@/hooks/useTravelPlan';
+import { useDeleteTravelPlan, useUpdateTravelPlan } from '@/hooks/useTravelPlan';
 import { PencilIcon, TrashIcon } from '@heroicons/react/16/solid';
 import ShareButton from './ShareButton';
+import { useSession } from 'next-auth/react';
+import { TravelPlan } from '@/types/types';
 
 interface TravelPlanDetailProps {
   travelPlanId: string;
+  travelPlan : TravelPlan
 }
 
-export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps) {
+export default function TravelPlanDetail({ travelPlanId, travelPlan }: TravelPlanDetailProps) {
   const router = useRouter();
-  const { data: travelPlan } = useTravelPlan(travelPlanId);
+  const { data: session } = useSession();
   const updateTravelPlan = useUpdateTravelPlan();
   const deleteTravelPlan = useDeleteTravelPlan();
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedPlan, setEditedPlan] = useState(travelPlan);
 
+  const isOwner = session?.user?.email === travelPlan?.userEmail
+
   useEffect(() => {
     setEditedPlan(travelPlan);
   }, [travelPlan]);
 
   const handleEdit = async () => {
+    if (!isOwner) return;
+
     if (isEditing && editedPlan) {
       updateTravelPlan.mutate(editedPlan, {
         onSuccess: () => {
@@ -42,6 +49,8 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
   };
 
   const handleDelete = async () => {
+    if (!isOwner) return;
+
     if (confirm('정말로 이 여행 계획을 삭제하시겠습니까?')) {
       deleteTravelPlan.mutate(travelPlanId, {
         onSuccess: () => {
@@ -57,6 +66,8 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (!isOwner) return;
+
     const { name, value } = e.target;
     const updatedValue = name === 'budget' ? Number(value) : value;
     setEditedPlan((prev: any) => prev ? { ...prev, [name]: updatedValue } : null);
@@ -160,24 +171,28 @@ export default function TravelPlanDetail({ travelPlanId }: TravelPlanDetailProps
         </div>
       </div>
       <div className="flex justify-end space-x-4">
-        {!isEditing && <ShareButton travelPlanId={travelPlanId} />}
-        <button
-          data-cy={isEditing ? 'plan-detail-edit-button' : 'plan-detail-button'}
-          onClick={handleEdit}
-          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-black  hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition ease-in-out duration-150"
-        >
-          <PencilIcon className="h-4 w-4 mr-2" />
-          {isEditing ? '저장' : '수정'}
-        </button>
-        {!isEditing && (
-          <button
-            data-cy="plan-detail-delete-button"
-            onClick={handleDelete}
-            className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150"
-          >
-            <TrashIcon className="h-4 w-4 mr-2" />
-            삭제
-          </button>
+        <ShareButton travelPlanId={travelPlanId} />
+        {isOwner && (
+          <>
+            <button
+              data-cy={isEditing ? 'plan-detail-edit-button' : 'plan-detail-button'}
+              onClick={handleEdit}
+              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-black hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition ease-in-out duration-150"
+            >
+              <PencilIcon className="h-4 w-4 mr-2" />
+              {isEditing ? '저장' : '수정'}
+            </button>
+            {!isEditing && (
+              <button
+                data-cy="plan-detail-delete-button"
+                onClick={handleDelete}
+                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150"
+              >
+                <TrashIcon className="h-4 w-4 mr-2" />
+                삭제
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>

@@ -6,18 +6,13 @@ import TravelPlan from '@/models/TravelPlan';
 import dbConnect from '@/lib/mongodb';
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: '인증되지 않은 사용자입니다.' }, { status: 401 });
-  }
-
   await dbConnect();
 
   const { searchParams } = new URL(request.url);
   const travelPlanId = searchParams.get('travelPlanId');
 
   try {
-    const travelPlan = await TravelPlan.findOne({ _id: travelPlanId, userEmail: session.user?.email });
+    const travelPlan = await TravelPlan.findOne({ _id: travelPlanId });
     if (!travelPlan) {
       return NextResponse.json({ error: '여행 계획을 찾을 수 없습니다.' }, { status: 404 });
     }

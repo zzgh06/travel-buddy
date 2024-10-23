@@ -46,6 +46,11 @@ export default function FloatingChecklistManager({ travelPlanId }: FloatingCheck
           type="text"
           value={newItemText}
           onChange={(e) => setNewItemText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleAddItem();
+            }
+          }}
           className="flex-grow px-3 py-2 border rounded-l-md"
           placeholder="새 항목 추가"
         />
