@@ -43,10 +43,10 @@ export const useTravelStore = create<TravelState>()(
       routeOrder: [],
       setBudgetAlertThreshold: (threshold) => set({ budgetAlertThreshold: threshold }),
       updateExpenses: (itineraries, budget) => {
-        const categoryExpenses = itineraries.reduce((acc, itinerary) => {
-          acc[itinerary.category as keyof typeof acc] += itinerary.expense;
-          return acc;
-        }, {
+        const categoryExpenses = itineraries.reduce((acc, itinerary) => ({
+          ...acc,
+          [itinerary.category]: (acc[itinerary.category as keyof typeof acc] || 0) + (itinerary.expense || 0)
+        }), {
           accommodation: 0,
           food: 0,
           transportation: 0,
@@ -57,7 +57,11 @@ export const useTravelStore = create<TravelState>()(
         const totalExpenses = Object.values(categoryExpenses).reduce((sum, expense) => sum + expense, 0);
         const remainingBudget = budget - totalExpenses;
 
-        set({ categoryExpenses, totalExpenses, remainingBudget });
+        set({ 
+          categoryExpenses, 
+          totalExpenses, 
+          remainingBudget 
+        });
       },
       initializeRouteMap: (locations, routeOrder) => {
         set({ locations, routeOrder });
