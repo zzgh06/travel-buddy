@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../auth/[...nextauth]/auth';
@@ -29,6 +28,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const updatedItem = await ChecklistItem.findByIdAndUpdate(id, body, { new: true, runValidators: true });
     return NextResponse.json({ success: true, data: updatedItem });
   } catch (error) {
+    console.error(error)
     return NextResponse.json({ success: false, error: '체크리스트 항목 수정에 실패했습니다.' }, { status: 400 });
   }
 }
@@ -55,6 +55,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     await ChecklistItem.deleteOne({ _id: id });
     return NextResponse.json({ success: true, data: {} });
   } catch (error) {
+    console.error(error)
     return NextResponse.json({ success: false, error: '체크리스트 항목 삭제에 실패했습니다.' }, { status: 400 });
   }
 }

@@ -5,7 +5,6 @@ import dbConnect from '@/lib/mongodb';
 import User, { IUser } from '@/models/User';
 import bcrypt from 'bcryptjs';
 
-// build 시 오류 발생하여 import 용 authOptions으로 분리
 export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
