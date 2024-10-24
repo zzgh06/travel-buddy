@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useTravelStore } from '@/store/useTravelStore';
 import { Location } from '@/types/types';
 import SearchSidebar from './SearchSidebar';
 import { BiSearch } from 'react-icons/bi';
@@ -19,8 +17,6 @@ export default function TravelRouteMap({ travelPlanId }: TravelRouteMapProps) {
   const addLocationMutation = useAddLocation();
   const removeLocationMutation = useRemoveLocation();
   const updateLocationMutation = useUpdateLocation();
-
-  const { updateLocalRouteMap } = useTravelStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
