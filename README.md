@@ -39,8 +39,7 @@
 <img src="https://img.shields.io/badge/nextauth-191919?style=for-the-badge&logo=nextauth&logoColor=black">
 
 ### Deployment / Testing
-<img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=Vercel&logoColor=white"/>
-<img src="https://img.shields.io/badge/Cypress-17202C?style=for-the-badge&logo=cypress&logoColor=white" />
+<img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=Vercel&logoColor=white"/> <img src="https://img.shields.io/badge/Cypress-17202C?style=for-the-badge&logo=cypress&logoColor=white" />
 <br>
 <br>
 
