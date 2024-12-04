@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { TravelPlan } from '@/types/types';
 import SearchBar from './Searchbar';
 import {
   ArrowRightCircleIcon,
@@ -12,10 +11,10 @@ import {
 } from '@heroicons/react/16/solid';
 import TravelStatusFilter, { TravelStatus } from './FilterButton';
 import { useTravelPlans } from '@/hooks/useTravelPlan';
+import TravelPlanListSkeleton from './skeleton/TravelPlanListSkeleton';
 
 export default function TravelPlanList() {
   const { data: plans = [], isLoading } = useTravelPlans();
-  const [filteredPlans, setFilteredPlans] = useState<TravelPlan[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeStatus, setActiveStatus] = useState<TravelStatus>('전체');
 
@@ -29,7 +28,7 @@ export default function TravelPlanList() {
     return "진행 중인 여행";
   };
 
-  const filterPlans = (searchTerm: string, status: TravelStatus) => {
+  const filteredPlans = useMemo(() => {
     let filtered = plans;
 
     if (searchTerm) {
@@ -39,31 +38,25 @@ export default function TravelPlanList() {
       );
     }
 
-    if (status !== '전체') {
+    if (activeStatus !== '전체') {
       filtered = filtered.filter(plan =>
-        getTravelStatus(plan.startDate, plan.endDate) === status
+        getTravelStatus(plan.startDate, plan.endDate) === activeStatus
       );
     }
 
-    setFilteredPlans(filtered);
-  };
+    return filtered;
+  }, [plans, searchTerm, activeStatus]);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
-    filterPlans(term, activeStatus);
   };
 
   const handleStatusChange = (status: TravelStatus) => {
     setActiveStatus(status);
-    filterPlans(searchTerm, status);
   };
 
-  useEffect(() => {
-    setFilteredPlans(plans);
-  }, [plans]);
-
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <TravelPlanListSkeleton />
   }
 
   return (
