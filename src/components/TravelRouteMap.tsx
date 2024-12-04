@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
@@ -7,6 +9,7 @@ import SearchSidebar from './SearchSidebar';
 import { BiSearch } from 'react-icons/bi';
 import { useTravelPlan } from '@/hooks/useTravelPlan';
 import { useAddLocation, useRemoveLocation, useUpdateLocation } from '@/hooks/useRouteMap';
+import Script from 'next/script';
 
 interface TravelRouteMapProps {
   travelPlanId: string;
@@ -20,6 +23,7 @@ export default function TravelRouteMap({ travelPlanId }: TravelRouteMapProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
 
   const locations = travelPlan?.routeMap?.locations || [];
   const routeOrder = travelPlan?.routeMap?.routeOrder || [];
@@ -27,8 +31,65 @@ export default function TravelRouteMap({ travelPlanId }: TravelRouteMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
   const placesService = useRef<google.maps.places.PlacesService | null>(null);
-  const scriptRef = useRef<HTMLScriptElement | null>(null);
 
+  const handleGoogleMapsLoad = () => {
+    try {
+      if (window.google?.maps) {
+        autocompleteService.current = new window.google.maps.places.AutocompleteService();
+        placesService.current = new window.google.maps.places.PlacesService(
+          document.createElement('div')
+        );
+        setIsGoogleMapsLoaded(true);
+      }
+    } catch (error) {
+      console.error('Error initializing Google Maps services:', error);
+    }
+  };
+
+  const handleSearch = () => {
+    if (!isGoogleMapsLoaded || !autocompleteService.current || !searchQuery.trim()) {
+      return;
+    }
+
+    const request: google.maps.places.AutocompleteRequest = {
+      input: searchQuery,
+      types: ['establishment', 'geocode']
+    };
+
+    autocompleteService.current.getPlacePredictions(request, (predictions, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+        setSearchResults(predictions);
+        setIsSidebarOpen(true);
+      }
+    });
+  };
+
+  const handleSelectPlace = (placeId: string) => {
+    if (!isGoogleMapsLoaded || !placesService.current) {
+      return;
+    }
+
+    const request: google.maps.places.PlaceDetailsRequest = {
+      placeId: placeId,
+      fields: ['name', 'geometry']
+    };
+
+    placesService.current.getDetails(request, (place, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
+        const newLocation: Location = {
+          id: Date.now(),
+          name: place.name || '알 수 없는 장소',
+          position: [place.geometry.location.lat(), place.geometry.location.lng()],
+          type: 'attraction',
+        };
+        handleAddLocation(newLocation);
+        mapRef.current?.setView(newLocation.position, 13);
+        setSearchResults([]);
+        setSearchQuery('');
+        setIsSidebarOpen(false);
+      }
+    });
+  };
 
   useEffect(() => {
     if (locations.length > 0 && travelPlanId) {
@@ -51,42 +112,6 @@ export default function TravelRouteMap({ travelPlanId }: TravelRouteMapProps) {
       saveLocations();
     }
   }, [locations, routeOrder, travelPlanId]);
-
-  useEffect(() => {
-    if (window.google?.maps) {
-      autocompleteService.current = new google.maps.places.AutocompleteService();
-      placesService.current = new google.maps.places.PlacesService(document.createElement('div'));
-      return;
-    }
-
-    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
-    if (existingScript) {
-      existingScript.addEventListener('load', () => {
-        autocompleteService.current = new google.maps.places.AutocompleteService();
-        placesService.current = new google.maps.places.PlacesService(document.createElement('div'));
-      });
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`;
-    script.async = true;
-    script.defer = true;
-
-    script.addEventListener('load', () => {
-      autocompleteService.current = new google.maps.places.AutocompleteService();
-      placesService.current = new google.maps.places.PlacesService(document.createElement('div'));
-    });
-
-    document.head.appendChild(script);
-    scriptRef.current = script;
-
-    return () => {
-      if (scriptRef.current && scriptRef.current.parentNode === document.head) {
-        document.head.removeChild(scriptRef.current);
-      }
-    };
-  }, []);
 
   const createNumberedIcon = useCallback((number: number) => {
     return L.divIcon({
@@ -162,47 +187,6 @@ export default function TravelRouteMap({ travelPlanId }: TravelRouteMapProps) {
     return null;
   };
 
-  const handleSearch = () => {
-    if (!autocompleteService.current || !searchQuery.trim()) return;
-
-    const request: google.maps.places.AutocompleteRequest = {
-      input: searchQuery,
-      types: ['establishment', 'geocode']
-    };
-
-    autocompleteService.current.getPlacePredictions(request, (predictions, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-        setSearchResults(predictions);
-        setIsSidebarOpen(true);
-      }
-    });
-  };
-
-  const handleSelectPlace = (placeId: string) => {
-    if (!placesService.current) return;
-
-    const request: google.maps.places.PlaceDetailsRequest = {
-      placeId: placeId,
-      fields: ['name', 'geometry']
-    };
-
-    placesService.current.getDetails(request, (place, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK && place && place.geometry && place.geometry.location) {
-        const newLocation: Location = {
-          id: Date.now(),
-          name: place.name || '알 수 없는 장소',
-          position: [place.geometry.location.lat(), place.geometry.location.lng()],
-          type: 'attraction',
-        };
-        handleAddLocation(newLocation); 
-        mapRef.current?.setView(newLocation.position, 13);
-        setSearchResults([]);
-        setSearchQuery('');
-        setIsSidebarOpen(false);
-      }
-    });
-  };
-
   const routePositions = useMemo(() => routeOrder.map(id =>
     locations.find(loc => loc.id === id)?.position
   ).filter((pos): pos is [number, number] => pos !== undefined), [locations, routeOrder]);
@@ -216,6 +200,11 @@ export default function TravelRouteMap({ travelPlanId }: TravelRouteMapProps) {
 
   return (
     <div className="relative">
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}
+        onLoad={handleGoogleMapsLoad}
+        strategy="lazyOnload"
+      />
       <div className="my-3 p-4 z-20">
         <div className='text-center mb-3'>
           <h3 className='font-bold text-2xl mb-1'>원하는 장소를 검색해 보세요</h3>

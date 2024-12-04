@@ -1,6 +1,6 @@
 import ClientWrapper from '@/components/ClientWrapper';
 import { Metadata } from 'next';
-import { getTravelPlanById } from '@/lib/api';
+import { getTravelPlanById } from '@/lib/api/travelPlan';
 
 type Props = {
   params: { id: string }

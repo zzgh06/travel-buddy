@@ -5,9 +5,14 @@ import BudgetTracker from './BudgetTracker';
 import ItineraryManager from './ItineraryManager';
 import BudgetAnalysis from './BudgetAnalysis';
 import FloatingToggleManager from './FloatingToggleManager';
-import TravelRouteMap from './TravelRouteMap';
 import { useTravelPlan } from '@/hooks/useTravelPlan';
 import TravelPlanDetailSkeleton from './skeleton/TravelPlanDetailSkeleton';
+import dynamic from 'next/dynamic';
+
+const TravelRouteMap = dynamic(() => import('./TravelRouteMap'), {
+  ssr: false,
+  loading: () => <div>지도를 불러오는 중...</div>
+});
 
 interface ClientWrapperProps {
   travelPlanId: string;
