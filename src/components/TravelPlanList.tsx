@@ -19,8 +19,6 @@ export default function TravelPlanList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeStatus, setActiveStatus] = useState<TravelStatus>('전체');
 
-  console.log("plans", plans)
-
   const getTravelStatus = (startDate: string, endDate: string) => {
     const now = new Date();
     const start = new Date(startDate);
@@ -62,7 +60,7 @@ export default function TravelPlanList() {
 
   useEffect(() => {
     setFilteredPlans(plans);
-  }, []);
+  }, [plans]);
 
   if (isLoading) {
     return <div>Loading...</div>;

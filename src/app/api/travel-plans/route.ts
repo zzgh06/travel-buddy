@@ -14,7 +14,7 @@ export async function GET(_req: NextRequest) {
   await dbConnect();
 
   try {
-    const travelPlans = await TravelPlan.find({ userId: session.user?.email }).sort({ createdAt: -1 });
+    const travelPlans = await TravelPlan.find({ userEmail: session.user?.email }).sort({ createdAt: -1 });
     return NextResponse.json({ success: true, data: travelPlans }, { status: 200 });
   } catch (error : any) {
     console.error(error);
