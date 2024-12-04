@@ -1,9 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/auth";
 import Link from "next/link";
-import { Suspense } from "react";
-import TravelPlanListSkeleton from "@/components/skeleton/TravelPlanListSkeleton";
-import TravelPlanList from "@/components/AsyncTravelPlanList";
+import TravelPlanList from "@/components/TravelPlanList";
 
 export default async function PlannerPage() {
   const session = await getServerSession(authOptions);
@@ -36,9 +34,7 @@ export default async function PlannerPage() {
           새 계획 만들기
         </Link>
       </div>
-      <Suspense fallback={<TravelPlanListSkeleton />}>
-        <TravelPlanList userEmail={session.user.email} />
-      </Suspense>
+      <TravelPlanList />
     </div>
   );
 }
