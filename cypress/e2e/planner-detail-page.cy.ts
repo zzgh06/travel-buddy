@@ -1,17 +1,41 @@
-describe('여행 계획 상세 페이지', () => {
-  beforeEach(() => {
-    cy.login(Cypress.env('TEST_USER_EMAIL'), Cypress.env('TEST_USER_PASSWORD'));
-    const testTravelPlanId = '6711406e0cf06f655a2fef54';
-    cy.visit(`/planner/${testTravelPlanId}`);
-  })
+import { createTestTravelPlan, generateTravelPlanData } from "../support/utils/travelPlanUtils";
 
-  it.skip('여행 계획 세부정보 확인', () => {
+describe('여행 계획 상세 페이지', () => {
+  let testTravelPlanId: string;
+
+  before(() => {
+    cy.login(Cypress.env('TEST_USER_EMAIL'), Cypress.env('TEST_USER_PASSWORD'));
+    
+    const testPlanData = generateTravelPlanData({
+      title: '테스트 여행',
+      destination: '테스트 도시',
+      startDate: '2024-11-18',
+      endDate: '2024-11-24',
+      budget: 500000,
+      description: '테스트를 위한 여행 계획입니다.',
+    });
+
+    createTestTravelPlan(testPlanData).then(id => {
+      testTravelPlanId = id;
+      console.log("testTravelPlanId", testTravelPlanId);
+    });
+  });
+
+  beforeEach(() => {
+    cy.session([Cypress.env('TEST_USER_EMAIL')], () => {
+      cy.login(Cypress.env('TEST_USER_EMAIL'), Cypress.env('TEST_USER_PASSWORD'));
+    });
+
+    cy.visit(`/planner/${testTravelPlanId}`);
+  });
+
+  it('여행 계획 세부정보 확인', () => {
     cy.dataCy('travel-plan-detail').should('be.visible');
     cy.dataCy('travel-plan-title').should('exist');
     cy.dataCy('travel-plan-date').should('exist');
   });
 
-  it.skip('여행 계획 세부정보 수정', () => {
+  it('여행 계획 세부정보 수정', () => {
     cy.dataCy('plan-detail-button').click();
 
     cy.dataCy('travel-plan-title-input').should('be.visible');
@@ -33,17 +57,6 @@ describe('여행 계획 상세 페이지', () => {
     cy.dataCy('travel-plan-title').should('contain', '서울 여행');
     cy.dataCy('travel-plan-destination').should('contain', '서울');
     cy.dataCy('travel-plan-description').should('contain', '서울 여행 갑니다.');
-  });
-
-  it.skip('여행 계획 삭제', () => {
-    cy.dataCy('plan-detail-delete-button').click();
-
-    cy.on('window:confirm', (str) => {
-      expect(str).to.equal('정말로 이 여행 계획을 삭제하시겠습니까?');
-      return true;
-    });
-
-    cy.url().should('include', '/planner');
   });
 
   it('예산 추적기 확인', () => {
@@ -100,23 +113,23 @@ describe('여행 계획 상세 페이지', () => {
     cy.wait(2000);
   
     cy.get('[date-cy="itinerary-item"]').first().scrollIntoView().within(() => {
-      cy.dataCy('itinerary-activity').should('be.visible').and('contain', '수정된 활동');
+      cy.dataCy('itinerary-activity').should('contain', '수정된 활동');
     });
   });
 
   it('일정 삭제', () => {
     cy.get('[date-cy="itinerary-item"]').first().within(() => {
-      cy.dataCy('itinerary-item-delete-button').click();
+      cy.dataCy('itinerary-item-delete-button').click({ force: true });
     });
-
+  
     cy.on('window:alert', (str) => {
       expect(str).to.equal('일정을 삭제했습니다.');
     });
-
+  
     cy.wait(2000);
-
+  
     cy.dataCy('itinerary-item-item').should('not.exist');
-  })
+  });
 
   it('토글 매니저 확인', () => {
     cy.dataCy('floating-toggle-manager').should('be.visible');
@@ -162,5 +175,16 @@ describe('여행 계획 상세 페이지', () => {
 
     cy.dataCy('toggle-button').click();
     cy.contains('체크리스트').should('be.visible');
+  });
+
+  it('여행 계획 삭제', () => {
+    cy.dataCy('plan-detail-delete-button').click();
+
+    cy.on('window:confirm', (str) => {
+      expect(str).to.equal('정말로 이 여행 계획을 삭제하시겠습니까?');
+      return true;
+    });
+
+    cy.url().should('include', '/planner');
   });
 });

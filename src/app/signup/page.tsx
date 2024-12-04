@@ -29,6 +29,7 @@ export default function SignUp() {
       alert('회원가입에 성공하였습니다.');
       router.push("/login");
     } catch (error) {
+      console.log("error", error)
       if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
@@ -41,7 +42,7 @@ export default function SignUp() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 data-cy="signup-title" className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Create an Account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
@@ -54,6 +55,7 @@ export default function SignUp() {
               <label htmlFor="name" className="sr-only">Name</label>
               <input
                 id="name"
+                data-cy="signup-name-input"
                 {...register("name", {
                   required: "이름을 입력해주세요.",
                   maxLength: {
@@ -69,7 +71,8 @@ export default function SignUp() {
               <label htmlFor="email" className="sr-only">Email</label>
               <input
                 id="email"
-                type="email"
+                data-cy="signup-email-input"
+                type="text"
                 {...register("email", {
                   required: "이메일을 입력해주세요.",
                   pattern: {
@@ -85,6 +88,7 @@ export default function SignUp() {
               <label htmlFor="password" className="sr-only">Password</label>
               <input
                 id="password"
+                data-cy="signup-password-input"
                 type="password"
                 {...register("password", {
                   required: "비밀번호를 입력해주세요.",
@@ -101,6 +105,7 @@ export default function SignUp() {
               <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
               <input
                 id="confirmPassword"
+                data-cy="signup-confirm-password-input"
                 type="password"
                 {...register("confirmPassword", {
                   required: "비밀번호를 다시 입력해주세요.",
@@ -117,7 +122,7 @@ export default function SignUp() {
           </div>
 
           {(errors.name || errors.email || errors.password || errors.confirmPassword || errorMessage) && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-4">
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-4" data-cy="error-message">
               <div className="flex">
                 <div className="ml-3">
                   <h3 className="text-sm font-medium text-red-800">입력 오류가 있습니다:</h3>
@@ -138,6 +143,7 @@ export default function SignUp() {
           <div>
             <button
               type="submit"
+              data-cy="signup-submit-button"
               disabled={signUpMutation.isPending}
               className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 ease-in-out ${
                 signUpMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''

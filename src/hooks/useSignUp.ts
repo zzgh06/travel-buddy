@@ -9,7 +9,7 @@ export const useSignUp = () => {
     },
     onError: (error: any) => {
       console.error('Sign up error:', error.response?.data?.error || error.message);
-      throw new Error(error.response?.data?.error || '회원가입에 실패했습니다.');
+      throw new Error(error.response?.data?.error || '이미 존재하는 이메일입니다.');
     },
   });
 };

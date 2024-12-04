@@ -19,7 +19,7 @@ export interface TravelPlan {
   userEmail: string;
   budget: number;
   routeMap?: RouteMap;
-  checklist: IChecklistItem[];
+  checklist?: IChecklistItem[];
 }
 
 export type ItineraryCategory = 'accommodation' | 'food' | 'transportation' | 'entertainment' | 'other';

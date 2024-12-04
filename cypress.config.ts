@@ -14,6 +14,7 @@ export default defineConfig({
     },
   },
   env: {
+    API_URL: 'http://localhost:3000', 
     TEST_USER_EMAIL: 'zzgh06@naver.com',
     TEST_USER_PASSWORD: '12345'
   }
