@@ -11,7 +11,7 @@ import {
 import TravelStatusFilter, { TravelStatus } from './FilterButton';
 import { useTravelPlans } from '@/hooks/useTravelPlan';
 import TravelPlanListSkeleton from './skeleton/TravelPlanListSkeleton';
-import Searchbar from './Searchbar';
+import Searchbar from './searchbar';
 
 export default function TravelPlanList() {
   const { data: plans = [], isLoading } = useTravelPlans();

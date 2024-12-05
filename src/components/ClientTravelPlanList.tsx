@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { TravelPlan } from '@/types/types';
-import SearchBar from './Searchbar';
+import SearchBar from './searchbar';
 import {
   ArrowRightCircleIcon,
   CalendarDateRangeIcon,
