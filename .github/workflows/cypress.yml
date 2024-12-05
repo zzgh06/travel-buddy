@@ -1,0 +1,68 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x]
+        
+    steps:
+    - name: Github Repository 파일 불러오기
+      uses: actions/checkout@v4
+
+    - name: Node 설치 ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: 의존성(라이브러리) 설치
+      run: npm ci
+    
+    - name: .env 파일 만들기
+      run: |
+        echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+        echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+        echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+        echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+        echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+        echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+        echo "NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY }}" >> .env
+
+    - name: Next 빌드
+      run: npm run build
+
+    - name: Cypress 테스트 실행
+      uses: cypress-io/github-action@v6
+      with:
+        build: npm run build
+        start: npm start
+        wait-on: 'http://localhost:3000'
+        browser: chrome
+        record: false 
+
+    - name: Cypress 스크린샷 업로드
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: cypress/screenshots
+        
+    - name: Cypress 비디오 업로드
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: cypress-videos
+        path: cypress/videos
+
+    - name: .env 삭제
+      if: always()
+      run: rm -f .env
