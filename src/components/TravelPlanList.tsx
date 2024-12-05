@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import SearchBar from './Searchbar';
 import {
   ArrowRightCircleIcon,
   CalendarDateRangeIcon,
@@ -12,6 +11,7 @@ import {
 import TravelStatusFilter, { TravelStatus } from './FilterButton';
 import { useTravelPlans } from '@/hooks/useTravelPlan';
 import TravelPlanListSkeleton from './skeleton/TravelPlanListSkeleton';
+import Searchbar from './Searchbar';
 
 export default function TravelPlanList() {
   const { data: plans = [], isLoading } = useTravelPlans();
@@ -61,7 +61,7 @@ export default function TravelPlanList() {
 
   return (
     <div className='max-w-[900px] mx-auto mt-4 p-4'>
-      <SearchBar onSearch={handleSearch} />
+      <Searchbar onSearch={handleSearch} />
       <TravelStatusFilter onStatusChange={handleStatusChange} />
 
       <div data-cy="trip-list" className="mt-8 space-y-6">

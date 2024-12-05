@@ -1,5 +1,5 @@
-import Provider from "@/components/Provider"
 import "./globals.css"
+import Provider from "@/components/Provider"
 import Navbar from "@/components/Navbar"
 import { Metadata } from 'next';
 

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { FaBars, FaTimes, FaChevronDown, FaSpinner } from 'react-icons/fa'
 
-const Navbar = () => {
+export default function Navbar() {
   const { status } = useSession()
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
@@ -168,5 +168,3 @@ const Navbar = () => {
     </nav >
   )
 }
-
-export default Navbar
