@@ -37,11 +37,6 @@ jobs:
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
           echo "NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY }}" >> .env
 
-      - name: List files in components directory
-        run: |
-          echo "Contents of src/components:"
-          ls -la src/components/
-      
       - name: Next 빌드
         run: npm run build
 
