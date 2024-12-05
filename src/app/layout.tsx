@@ -1,7 +1,8 @@
+import Provider from "@/components/Provider";
 import "./globals.css"
-import Provider from "@/components/Provider"
-import Navbar from "@/components/Navbar"
+
 import { Metadata } from 'next';
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: '여행 플래너 - 당신의 완벽한 여행 파트너',
