@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/auth";
 import Link from "next/link";
-import TravelPlanList from "@/components/TravelPlanList";
+import TravelPlanList from "../../components/TravelPlanList";
 
 export default async function PlannerPage() {
   const session = await getServerSession(authOptions);
