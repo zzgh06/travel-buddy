@@ -74,10 +74,10 @@ describe('여행 계획 상세 페이지', () => {
   it.only('새 일정 추가', () => {
     cy.dataCy('itinerary-date-input').type('2024-11-20');
     cy.dataCy('itinerary-time-input').type('14:00');
-    cy.get('[date-cy="itinerary-activity-input"]').type('남산타워 방문');
-    cy.get('[date-cy="itinerary-location-input"]').type('남산');
-    cy.get('[date-cy="itinerary-expense-input"]').type('20000');
-    cy.get('[date-cy="itinerary-category-input"]').select('entertainment');
+    cy.get('[data-cy="itinerary-activity-input"]').type('남산타워 방문');
+    cy.get('[data-cy="itinerary-location-input"]').type('남산');
+    cy.get('[data-cy="itinerary-expense-input"]').type('20000');
+    cy.get('[data-cy="itinerary-category-input"]').select('entertainment');
     cy.dataCy('itinerary-notes-textarea').type('서울 야경 구경');
     cy.dataCy('itinerary-manager-add-submit').click();
 
@@ -85,7 +85,9 @@ describe('여행 계획 상세 페이지', () => {
       expect(str).to.equal('새 일정이 추가되었습니다.');
     });
 
-    cy.get('[date-cy="itinerary-item"]').first().within(() => {
+    cy.wait(2000);
+
+    cy.get('[data-cy="itinerary-item"]').first().within(() => {
       cy.dataCy('itinerary-activity').should('contain', '남산타워 방문');
       cy.dataCy('itinerary-location').should('contain', '남산');
       cy.dataCy('itinerary-date').should('contain', '2024. 11. 20.');
@@ -96,14 +98,14 @@ describe('여행 계획 상세 페이지', () => {
   });
 
   it('기존 일정 수정', () => {
-    cy.get('[date-cy="itinerary-item"]').first().scrollIntoView().should('be.visible').within(() => {
+    cy.get('[data-cy="itinerary-item"]').first().scrollIntoView().should('be.visible').within(() => {
       cy.dataCy('itinerary-item-edit-button').should('be.visible').click({ force: true });
     });
   
     cy.dataCy('itinerary-date-input').should('be.visible').clear().type('2024-11-21');
-    cy.get('[date-cy="itinerary-activity-input"]').should('be.visible').clear().type('수정된 활동');
-    cy.get('[date-cy="itinerary-location-input"]').should('be.visible').clear().type('수정된 장소');
-    cy.get('[date-cy="itinerary-expense-input"]').should('be.visible').clear().type('30000');
+    cy.get('[data-cy="itinerary-activity-input"]').should('be.visible').clear().type('수정된 활동');
+    cy.get('[data-cy="itinerary-location-input"]').should('be.visible').clear().type('수정된 장소');
+    cy.get('[data-cy="itinerary-expense-input"]').should('be.visible').clear().type('30000');
     cy.dataCy('itinerary-manager-edit-submit').should('be.visible').click();
   
     cy.on('window:alert', (str) => {
@@ -112,13 +114,13 @@ describe('여행 계획 상세 페이지', () => {
   
     cy.wait(2000);
   
-    cy.get('[date-cy="itinerary-item"]').first().scrollIntoView().within(() => {
+    cy.get('[data-cy="itinerary-item"]').first().scrollIntoView().within(() => {
       cy.dataCy('itinerary-activity').should('contain', '수정된 활동');
     });
   });
 
   it('일정 삭제', () => {
-    cy.get('[date-cy="itinerary-item"]').first().within(() => {
+    cy.get('[data-cy="itinerary-item"]').first().within(() => {
       cy.dataCy('itinerary-item-delete-button').click({ force: true });
     });
   
