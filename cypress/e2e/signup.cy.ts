@@ -12,27 +12,6 @@ describe('회원가입', () => {
     cy.dataCy('signup-submit-button').should('exist');
   });
 
-  it('유효한 데이터로 회원가입 후 로그인 페이지로 이동', () => {
-    const testUser = {
-      name: 'Test User',
-      email: `test${Date.now()}@example.com`,
-      password: 'testPassword123'
-    };
-
-    cy.dataCy('signup-name-input').type(testUser.name);
-    cy.dataCy('signup-email-input').type(testUser.email);
-    cy.dataCy('signup-password-input').type(testUser.password);
-    cy.dataCy('signup-confirm-password-input').type(testUser.password);
-    
-    cy.dataCy('signup-submit-button').click();
-
-    cy.on('window:alert', (text) => {
-      expect(text).to.equal('회원가입에 성공하였습니다.');
-    });
-
-    cy.url().should('include', '/login');
-  });
-
   it('잘못된 입력 데이터로 회원가입 시 에러 메시지 표시', () => {
     cy.dataCy('signup-name-input').type('이름이열자를초과하는경우');
     cy.dataCy('signup-email-input').type('invalid-email');
@@ -63,5 +42,26 @@ describe('회원가입', () => {
     cy.dataCy('signup-submit-button').click();
 
     cy.dataCy('error-message').should('contain', '이미 존재하는 이메일입니다.');
+  });
+
+  it('유효한 데이터로 회원가입 후 로그인 페이지로 이동', () => {
+    const testUser = {
+      name: 'Test User',
+      email: `test${Date.now()}@example.com`,
+      password: 'testPassword123'
+    };
+
+    cy.dataCy('signup-name-input').type(testUser.name);
+    cy.dataCy('signup-email-input').type(testUser.email);
+    cy.dataCy('signup-password-input').type(testUser.password);
+    cy.dataCy('signup-confirm-password-input').type(testUser.password);
+    
+    cy.dataCy('signup-submit-button').click();
+
+    cy.on('window:alert', (text) => {
+      expect(text).to.equal('회원가입에 성공하였습니다.');
+    });
+
+    cy.url().should('include', '/login');
   });
 });

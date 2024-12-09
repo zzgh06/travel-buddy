@@ -71,7 +71,7 @@ describe('여행 계획 상세 페이지', () => {
     cy.get('[data-cy="itinerary-manager-time"]').should('exist');
   });
 
-  it('새 일정 추가', () => {
+  it.only('새 일정 추가', () => {
     cy.dataCy('itinerary-date-input').type('2024-11-20');
     cy.dataCy('itinerary-time-input').type('14:00');
     cy.get('[date-cy="itinerary-activity-input"]').type('남산타워 방문');
@@ -88,6 +88,7 @@ describe('여행 계획 상세 페이지', () => {
     cy.get('[date-cy="itinerary-item"]').first().within(() => {
       cy.dataCy('itinerary-activity').should('contain', '남산타워 방문');
       cy.dataCy('itinerary-location').should('contain', '남산');
+      cy.dataCy('itinerary-date').invoke('text').should('match', /2024.*11.*20/);
       cy.dataCy('itinerary-time').should('contain', '14:00');
       cy.dataCy('itinerary-expense').should('contain', '20,000 원');
       cy.dataCy('itinerary-notes').should('contain', '서울 야경 구경');
