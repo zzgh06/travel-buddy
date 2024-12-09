@@ -197,7 +197,7 @@ export default function ItineraryManager({ travelPlanId, travelPlan }: Itinerary
                 <p data-cy="itinerary-location" className="text-sm text-gray-600">장소: {itinerary.location}</p>
               </div>
               <div className="text-right">
-                <p data-cy="itinerary-date" className="text-sm font-medium text-gray-800">날짜 : {new Date(itinerary.date).toLocaleDateString()}</p>
+                <p data-cy="itinerary-date">날짜 : {new Date(itinerary.date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replaceAll('.', '. ')}</p>
                 <p data-cy="itinerary-time" className="text-sm text-gray-600">시간 : {itinerary.time}</p>
               </div>
             </div>
