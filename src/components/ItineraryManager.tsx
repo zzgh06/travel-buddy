@@ -126,7 +126,7 @@ export default function ItineraryManager({ travelPlanId, travelPlan }: Itinerary
               <div data-cy="itinerary-manager-activity">
                 <label className="block text-sm font-medium text-gray-700 mb-1">활동</label>
                 <input {...register('activity')}
-                  date-cy="itinerary-activity-input"
+                  data-cy="itinerary-activity-input"
                   placeholder='활동'
                   required
                   className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
@@ -134,7 +134,7 @@ export default function ItineraryManager({ travelPlanId, travelPlan }: Itinerary
               <div data-cy="itinerary-manager-location">
                 <label className="block text-sm font-medium text-gray-700 mb-1">장소</label>
                 <input {...register('location')}
-                  date-cy="itinerary-location-input"
+                  data-cy="itinerary-location-input"
                   placeholder='장소'
                   required
                   className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent' />
@@ -142,7 +142,7 @@ export default function ItineraryManager({ travelPlanId, travelPlan }: Itinerary
               <div data-cy="itinerary-manager-expense">
                 <label className="block text-sm font-medium text-gray-700 mb-1">지출 금액</label>
                 <input {...register('expense')}
-                  date-cy="itinerary-expense-input"
+                  data-cy="itinerary-expense-input"
                   type="number"
                   min="0"
                   placeholder='지출 금액'
@@ -151,7 +151,7 @@ export default function ItineraryManager({ travelPlanId, travelPlan }: Itinerary
               <div data-cy="itinerary-manager-category">
                 <label className="block text-sm font-medium text-gray-700 mb-1">카테고리 선택</label>
                 <select {...register('category')}
-                  date-cy="itinerary-category-input"
+                  data-cy="itinerary-category-input"
                   required
                   className='w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent'>
                   <option value="">카테고리 선택</option>
@@ -188,16 +188,16 @@ export default function ItineraryManager({ travelPlanId, travelPlan }: Itinerary
         </>
       )}
 
-      <div date-cy="itinerary-list" className="space-y-4">
+      <div data-cy="itinerary-list" className="space-y-4">
         {itineraries?.map((itinerary) => (
-          <div date-cy="itinerary-item" key={itinerary._id} className='p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-300 ease-in-out'>
+          <div data-cy="itinerary-item" key={itinerary._id} className='p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-300 ease-in-out'>
             <div className='flex justify-between items-start mb-2'>
               <div>
                 <h3 data-cy="itinerary-activity" className="text-lg font-semibold pb-2 text-gray-800">{itinerary.activity}</h3>
                 <p data-cy="itinerary-location" className="text-sm text-gray-600">장소: {itinerary.location}</p>
               </div>
               <div className="text-right">
-                <p data-cy="itinerary-date">날짜 : {new Date(itinerary.date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replaceAll('.', '. ')}</p>
+                <p data-cy="itinerary-date" className="text-sm font-medium text-gray-800">날짜 : {new Date(itinerary.date).toLocaleDateString()}</p>
                 <p data-cy="itinerary-time" className="text-sm text-gray-600">시간 : {itinerary.time}</p>
               </div>
             </div>
